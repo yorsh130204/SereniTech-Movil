@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState, createContext } from 'react';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
-import { firebaseConfig } from '../config/firebase'; // Asegúrate de importar la configuración de Firebase
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import { firebaseApp } from '../config/firebase'; // Asegúrate de importar la configuración de Firebase
 
 const AuthContext = createContext();
 

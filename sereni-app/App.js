@@ -6,13 +6,11 @@ import Home from './pages/Home';
 import PulsoScreen from './components/PulsoScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AuthProvider } from './contexts/AuthContext';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <AuthProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={LandingPage} />
@@ -22,7 +20,6 @@ export default function App() {
         </Stack.Navigator>
         <StatusBar style="auto" />
       </NavigationContainer>
-    </AuthProvider>
   );
 }
 

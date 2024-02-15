@@ -1,11 +1,36 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
-import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { useAuth } from "../contexts/AuthContext";
+import { Mail, Lock } from 'react-feather';
 
 function LandingPage() {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      setError('');
+
+      // Check if the password is at least 8 characters
+      if (password.length < 8) {
+        throw new Error('La contraseña debe tener al menos 8 caracteres.');
+      }
+
+      setLoading(true);
+      await login(email, password);
+      irAInicio();
+    } catch (error) {
+      console.error("Error al iniciar sesión", error);
+      setError(error.message || "Error al iniciar sesión");
+      Alert.alert('Error', error.message || "Error al iniciar sesión");
+    }
+
+    setLoading(false);
+  };
   
   const irASignup = () => {
     // Aquí puedes navegar a la pantalla de signup
@@ -67,11 +92,14 @@ function LandingPage() {
         <TextInput 
           className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
           placeholder="Email: (ejemplo@correo.com)"
+          ref={emailRef}
         />
         <TextInput 
           className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
           placeholder="Contraseña: (Minimo 8 caracteres)"
+          ref={passwordRef}
         />
+        {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
         <Text 
           className="text-[#042a59] text-center font-bold mt-6"
           style={{ fontSize: 16}}
@@ -88,8 +116,10 @@ function LandingPage() {
       </View>
       <TouchableOpacity
         className="w-48 px-8 py-4 bg-gray-500 rounded-md transition duration-300 hover:bg-gray-600 mt-3 mb-3"
+        onPress={handleSubmit}
+        disabled={loading}
       >
-        <Text className="text-lg font-medium text-center text-white" onPress={irAInicio}>
+        <Text className="text-lg font-medium text-center text-white">
           Iniciar Sesión
         </Text>
       </TouchableOpacity>
