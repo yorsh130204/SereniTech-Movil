@@ -1,16 +1,17 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import LandingPage from './pages/LandingPage';
 import SignUp from './pages/SignUp';
 import Home from './pages/Home';
 import PulsoScreen from './components/PulsoScreen';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <React.Fragment>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={LandingPage} />
@@ -18,8 +19,8 @@ export default function App() {
           <Stack.Screen name="Inicio" component={Home} />
           <Stack.Screen name="PulsoScreen" component={PulsoScreen} />
         </Stack.Navigator>
-        <StatusBar style="auto" />
       </NavigationContainer>
+      <StatusBar style="auto" />
+    </React.Fragment>
   );
 }
-

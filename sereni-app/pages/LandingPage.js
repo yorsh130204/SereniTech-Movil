@@ -1,46 +1,39 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
-import { useAuth } from "../contexts/AuthContext";
-import { Mail, Lock } from 'react-feather';
+//LandingPage.js
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
+import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { auth } from '../config/firebaseConfig';
 
 function LandingPage() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    try {
-      setError('');
-
-      // Check if the password is at least 8 characters
-      if (password.length < 8) {
-        throw new Error('La contraseña debe tener al menos 8 caracteres.');
-      }
-
-      setLoading(true);
-      await login(email, password);
-      irAInicio();
-    } catch (error) {
-      console.error("Error al iniciar sesión", error);
-      setError(error.message || "Error al iniciar sesión");
-      Alert.alert('Error', error.message || "Error al iniciar sesión");
-    }
-
-    setLoading(false);
-  };
-  
   const irASignup = () => {
-    // Aquí puedes navegar a la pantalla de signup
-    navigation.navigate('Signup'); // Ajusta el nombre de la pantalla según tu configuración de React Navigation
+    navigation.navigate('Signup');
   };
 
   const irAInicio = () => {
-    // Aquí puedes navegar a la pantalla de signup
-    navigation.navigate('Inicio'); // Ajusta el nombre de la pantalla según tu configuración de React Navigation
-  }
+    navigation.navigate('Inicio');
+  };
+
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      auth.signInWithEmailAndPassword(email, password);
+      console.log('User logged-in successfully!');
+      setLoading(false);
+      navigation.navigate('Dashboard'); // Adjust navigation based on your configuration
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+      Alert.alert('Error', error.message);
+    }
+  };
 
   function SvgTop(){
     return (
@@ -92,12 +85,14 @@ function LandingPage() {
         <TextInput 
           className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
           placeholder="Email: (ejemplo@correo.com)"
-          ref={emailRef}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
         />
         <TextInput 
           className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
           placeholder="Contraseña: (Minimo 8 caracteres)"
-          ref={passwordRef}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
         />
         {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
         <Text 
@@ -116,8 +111,8 @@ function LandingPage() {
       </View>
       <TouchableOpacity
         className="w-48 px-8 py-4 bg-gray-500 rounded-md transition duration-300 hover:bg-gray-600 mt-3 mb-3"
-        onPress={handleSubmit}
         disabled={loading}
+        onPress={handleLogin}
       >
         <Text className="text-lg font-medium text-center text-white">
           Iniciar Sesión
