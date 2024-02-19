@@ -7,6 +7,7 @@ import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function Signup() {
   const navigation = useNavigation();
@@ -16,6 +17,10 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordVisibility, setPasswordVisibility] = useState(true);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(true);
+  const [passwordRightIcon, setPasswordRightIcon] = useState('eye');
+  const [confirmPasswordRightIcon, setConfirmPasswordRightIcon] = useState('eye');
 
   const auth = FIREBASE_AUTH;
   const signup = async () => {
@@ -51,6 +56,21 @@ function Signup() {
   const irAHome = () => {
     // Aquí puedes navegar a la pantalla de signup
     navigation.navigate('Inicio'); // Ajusta el nombre de la pantalla según tu configuración de React Navigation
+  };
+
+  const irALogin = () => {
+    // Aquí puedes navegar a la pantalla de login
+    navigation.navigate('Home'); // Ajusta el nombre de la pantalla según tu configuración de React Navigation
+  };
+
+  const handlePasswordVisibility = () => {
+    setPasswordRightIcon((prevIcon) => (prevIcon === 'eye' ? 'eye-slash' : 'eye'));
+    setPasswordVisibility(!passwordVisibility);
+  };
+
+  const handleConfirmPasswordVisibility = () => {
+    setConfirmPasswordRightIcon((prevIcon) => (prevIcon === 'eye' ? 'eye-slash' : 'eye'));
+    setConfirmPasswordVisibility(!confirmPasswordVisibility);
   };
 
   function SvgTop(){
@@ -116,20 +136,36 @@ function Signup() {
             value={email}
             onChangeText={(text) => setEmail(text)}
           />
-          <TextInput 
-            className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-            placeholder="Contraseña: (Minimo 8 caracteres)"
-            secureTextEntry={true}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <TextInput 
-            className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-            placeholder="Confirmar contraseña: (Minimo 8 caracteres)"
-            secureTextEntry={true}
-            value={confirmPassword}
-            onChangeText={(text) => setConfirmPassword(text)}
-          />
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput 
+              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+              placeholder="Contraseña: (Minimo 8 caracteres)"
+              secureTextEntry={passwordVisibility}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+            <TouchableOpacity
+              style={{ marginLeft: -30, marginTop: 20 }} 
+              onPress={handlePasswordVisibility}
+            >
+              <Icon name={passwordRightIcon} size={25} color="#042a59"/>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput 
+              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+              placeholder="Confirmar contraseña: (Minimo 8 caracteres)"
+              secureTextEntry={confirmPasswordVisibility}
+              value={confirmPassword}
+              onChangeText={(text) => setConfirmPassword(text)}
+            />
+            <TouchableOpacity
+              style={{ marginLeft: -30, marginTop: 20 }}  
+              onPress={handleConfirmPasswordVisibility}
+            >
+              <Icon name={confirmPasswordRightIcon} size={25} color="#042a59"/>
+            </TouchableOpacity>
+          </View>
           {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
           <Text 
             className="text-[#042a59] text-center font-bold mt-6"
@@ -139,7 +175,7 @@ function Signup() {
             <Text 
               className="text-[#042a59] font-bold mt-1 underline"
               style={{ fontSize: 16}}
-              onPress={irAHome}
+              onPress={irALogin}
             >
               Iniciar Sesión
             </Text>

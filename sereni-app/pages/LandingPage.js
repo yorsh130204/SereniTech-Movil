@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { FIREBASE_AUTH } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function LandingPage() {
   const navigation = useNavigation();
@@ -14,6 +15,8 @@ function LandingPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordVisibility, setPasswordVisibility] = useState(true);
+  const [passwordRightIcon, setPasswordRightIcon] = useState('eye');
 
   const auth = FIREBASE_AUTH;
   const login = async () => {
@@ -38,7 +41,10 @@ function LandingPage() {
     navigation.navigate('Inicio');
   };
 
-  
+  const handlePasswordVisibility = () => {
+    setPasswordRightIcon((prevIcon) => (prevIcon === 'eye' ? 'eye-slash' : 'eye'));
+    setPasswordVisibility(!passwordVisibility);
+  };
 
   function SvgTop(){
     return (
@@ -97,13 +103,21 @@ function LandingPage() {
             value={email}
             onChangeText={(text) => setEmail(text)}
           />
-          <TextInput 
-            className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-            placeholder="Contraseña: (Minimo 8 caracteres)"
-            secureTextEntry={true}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput 
+              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+              placeholder="Contraseña: (Minimo 8 caracteres)"
+              secureTextEntry={passwordVisibility}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+            <TouchableOpacity
+              style={{ marginLeft: -30, marginTop: 20 }} 
+              onPress={handlePasswordVisibility}
+            >
+              <Icon name={passwordRightIcon} size={25} color="#042a59"/>
+            </TouchableOpacity>
+          </View>
           {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
           <Text 
             className="text-[#042a59] text-center font-bold mt-6"
