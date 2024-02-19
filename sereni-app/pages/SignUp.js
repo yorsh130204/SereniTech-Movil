@@ -1,3 +1,4 @@
+//SignUp.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
@@ -28,6 +29,10 @@ function Signup() {
     try {
       if (password !== confirmPassword) {
         throw new Error('Las contraseñas no coinciden');
+      }
+
+      if (password.length < 8) {
+        throw new Error('La contraseña debe tener al menos 8 caracteres');
       }
   
       // Create user in authentication
@@ -154,7 +159,7 @@ function Signup() {
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TextInput 
               className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-              placeholder="Confirmar contraseña: (Minimo 8 caracteres)"
+              placeholder="Confirmar: (Minimo 8 caracteres)"
               secureTextEntry={confirmPasswordVisibility}
               value={confirmPassword}
               onChangeText={(text) => setConfirmPassword(text)}
