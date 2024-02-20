@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { FIREBASE_AUTH } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import * as Animatable from 'react-native-animatable';
 
 const windowWidth = Dimensions.get('screen').width;
 const windowHeight = Dimensions.get('screen').height;
@@ -58,11 +59,11 @@ function LandingPage() {
         fill="none"
       >
         <Path
-          fill="#0B4B7D"
+          fill="#3d79a0"
           d={`M0 0h${windowWidth}v306.594c-105.105 90.314-298.103-87.185-${windowWidth} 0V0Z`}
         />
         <Path
-          fill="#0B4B7D"
+          fill="#246894"
           fillOpacity={0.5}
           d={`M${windowWidth} 5.408H0V306.71c165.105 88.377 298.103-85.314 ${windowWidth} 0V5.408Z`}
         >
@@ -76,16 +77,20 @@ function LandingPage() {
     behavior={Platform.OS === "ios" ? "padding" : "height"}
     style={{ flex: 1 }}
     >
-      <ScrollView className="bg-gray-200">
+      <ScrollView>
       <View className="items-center bg-gray-200 dark:bg-gray-800" style={{ flex: 1 }}>
         <View style={styles.containerSvg}>
             <SvgTop 
               style={{ height: windowHeight * 0.3}}
             />
-            <Image
+            <Animatable.Image
               className="absolute top-10"
               source={require('../assets/favicon.png')}
               style={{ width: 250, height: 250 }}
+              animation="pulse"
+              easing="ease-out"
+              iterationCount="infinite"
+              duration={800}
             />
         </View>
         <View className="items-center justify-center mt-4">
