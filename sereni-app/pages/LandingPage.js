@@ -21,11 +21,10 @@ function LandingPage() {
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [passwordRightIcon, setPasswordRightIcon] = useState('eye');
 
-  const auth = FIREBASE_AUTH;
   const login = async () => {
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(auth, email, password);
+      const response = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       console.log(response);
       irAInicio();
     } catch (error) {

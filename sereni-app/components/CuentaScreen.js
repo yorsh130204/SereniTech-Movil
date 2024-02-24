@@ -83,7 +83,7 @@ const AccountSection = () => {
 
         {/* Nombre Actual */}
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
-          Nombre Actual: {currentName}
+          {currentName}
         </Text>
       </View>
 

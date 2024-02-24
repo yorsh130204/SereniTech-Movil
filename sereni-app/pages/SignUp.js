@@ -26,7 +26,6 @@ function Signup() {
   const [passwordRightIcon, setPasswordRightIcon] = useState('eye');
   const [confirmPasswordRightIcon, setConfirmPasswordRightIcon] = useState('eye');
 
-  const auth = FIREBASE_AUTH;
   const signup = async () => {
     setLoading(true);
     try {
@@ -39,7 +38,7 @@ function Signup() {
       }
   
       // Create user in authentication
-      const authResponse = await createUserWithEmailAndPassword(auth, email, password);
+      const authResponse = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
   
       // Save additional user information in the Realtime Database
       const userId = authResponse.user.uid;
