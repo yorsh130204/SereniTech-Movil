@@ -1,24 +1,29 @@
+//CuentaScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert, Image } from 'react-native';
+import { Text, Platform, RefreshControl } from 'react-native';
+import { updateProfile, updatePassword, deleteUser, signOut } from 'firebase/auth';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
-import { updateProfile, updatePassword, deleteUser } from 'firebase/auth';
 import { ref, get, set } from 'firebase/database';
-import profileImage from '../assets/img/user1.png';
+import { Image, Input, VStack, Button, Pressable, ScrollView, KeyboardAvoidingView, Modal } from 'native-base';
+import profileImage from '../assets/img/users.png';
+import { useNavigation } from '@react-navigation/native';
 
 const AccountSection = () => {
+  const navigation = useNavigation();
   const [newName, setNewName] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmationText, setConfirmationText] = useState('');
   const [currentName, setCurrentName] = useState('');
   const [editingProfile, setEditingProfile] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const currentUser = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
     // Cargar el nombre actual cuando el componente se monta
     loadCurrentName();
-  }, []);
+  }, [refreshing]);
 
   const loadCurrentName = async () => {
     try {
@@ -32,104 +37,231 @@ const AccountSection = () => {
     }
   };
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    status: '',
+    title: '',
+    message: '',
+  });
+
+  const showAlert = (status, title, message) => {
+    setModalContent({ status, title, message });
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
   const handleUpdateName = async () => {
+    if (!newName) {
+      showAlert('error', 'Error', 'El campo de nuevo nombre no puede estar vacío.');
+      return;
+    }
+
     try {
-      await updateProfile(currentUser, { displayName: newName });
-      await set(ref(FIREBASE_DB, `users/${currentUser.uid}`), { name: newName }, { merge: true });
-      Alert.alert('Éxito', 'Nombre actualizado exitosamente.');
+      // Obtener la información actual del usuario desde la base de datos
+      const userSnapshot = await get(ref(FIREBASE_DB, `users/${currentUser.uid}`));
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.val();
+
+        // Actualizar solo el nombre en el auth
+        await updateProfile(currentUser, { displayName: newName });
+
+        // Actualizar el nombre en la base de datos manteniendo el uid y el email
+        await set(ref(FIREBASE_DB, `users/${currentUser.uid}`), {
+          ...userData,  // Mantener la información existente
+          name: newName, // Actualizar solo el nombre
+        });
+      }
+
+      setRefreshing(true);
+      showAlert('success', 'Éxito', 'Nombre actualizado exitosamente.');
     } catch (error) {
-      Alert.alert('Error', 'Error al actualizar el nombre: ' + error.message);
+      showAlert('error', 'Error', 'Error al actualizar el nombre: ' + error.message);
+    } finally {
+      setTimeout(() => setRefreshing(false), 500);
     }
   };
 
   const handleUpdatePassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      showAlert('error', 'Error', 'Los campos de nueva contraseña y confirmación no pueden estar vacíos.');
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'La nueva contraseña y la confirmación no coinciden.');
+      showAlert('error', 'Error', 'La nueva contraseña y la confirmación no coinciden.');
       return;
     }
 
     try {
       await updatePassword(currentUser, newPassword);
-      Alert.alert('Éxito', 'Contraseña actualizada exitosamente.');
+      showAlert('success', 'Éxito', 'Contraseña actualizada exitosamente.');
+      setRefreshing(true);
     } catch (error) {
-      Alert.alert('Error', 'Error al actualizar la contraseña: ' + error.message);
+      showAlert('error', 'Error', 'Error al actualizar la contraseña: ' + error.message);
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (confirmationText.trim() !== 'Eliminar Cuenta') {
-      Alert.alert('Error', 'Texto de confirmación incorrecto. Por favor, escribe "Eliminar Cuenta".');
+    if (!confirmationText || confirmationText.trim() !== 'Eliminar Cuenta') {
+      showAlert('error', 'Error', 'Texto de confirmación incorrecto. Por favor, escribe "Eliminar Cuenta".');
       return;
     }
 
     try {
       await deleteUser(currentUser);
-      Alert.alert('Éxito', 'Cuenta eliminada exitosamente.');
+      showAlert('success', 'Éxito', 'Cuenta eliminada exitosamente.');
     } catch (error) {
-      Alert.alert('Error', 'Error al eliminar la cuenta: ' + error.message);
+      showAlert('error', 'Error', 'Error al eliminar la cuenta: ' + error.message);
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(FIREBASE_AUTH);
+      showAlert('success', 'Éxito', 'Cierre de sesión exitoso.');
+      navigation.navigate('Home');
+    } catch (error) {
+      showAlert('error', 'Error', 'Error al cerrar sesión: ' + error.message);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    // Realizar operaciones de carga de datos o actualización aquí
+    await loadCurrentName(); // Puedes adaptar esto según tus necesidades
+    setRefreshing(false);
+  };
+
   return (
-    <View className="p-4 bg-gray-100 rounded-lg shadow-md">
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        {/* Imagen de Perfil */}
-        {profileImage && (
-          <Image
-            source={profileImage}
-            style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
-          />
-        )}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        <VStack space={4} p={4} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
+          {profileImage && (
+            <Image
+              source={profileImage}
+              alt="Profile Image"
+              style={{ width: 100, height: 100, borderWidth: 2, borderColor: '#10699b', borderRadius: 50, marginBottom: 10}}
+            />
+          )}
 
-        {/* Nombre Actual */}
-        <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
-          {currentName}
-        </Text>
-      </View>
+          <Text
+            style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 2, color: '#10699b', fontFamily: 'Inter-Regular' }}
+          >
+            {currentName}
+          </Text>
 
-      {editingProfile ? (
-        // Sección para editar el perfil
-        <>
-          {/* Cambiar Nombre */}
-          <TextInput
-            placeholder={`Nuevo nombre (actual: ${currentName})`}
-            value={newName}
-            onChangeText={(text) => setNewName(text)}
-            className="bg-white border rounded-md p-3 mb-4"
-          />
-          <Button title="Actualizar Nombre" onPress={handleUpdateName} />
+          {editingProfile ? (
+            <>
+              <Input
+                placeholder={`Nuevo nombre (actual: ${currentName})`}
+                value={newName}
+                onChangeText={(text) => setNewName(text)}
+                className="bg-white rounded-lg p-3 mb-1/2"
+                style={{ fontFamily: 'Inter-Regular' }}
+              />
+              <Button
+                onPress={handleUpdateName}
+                bg="#6fc1d2"
+                _pressed={{ bg: '#7da09c' }}
+                isDisabled={!newName}
+                style={{ fontSize: 20 }} // Ajusta el tamaño de la fuente según sea necesario
+              >
+                Actualizar Nombre
+              </Button>
 
-          {/* Cambiar Contraseña */}
-          <TextInput
-            placeholder="Nueva contraseña"
-            secureTextEntry
-            value={newPassword}
-            onChangeText={(text) => setNewPassword(text)}
-            className="bg-white border rounded-md p-3 mb-4"
-          />
-          <TextInput
-            placeholder="Confirmar nueva contraseña"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={(text) => setConfirmPassword(text)}
-            className="bg-white border rounded-md p-3 mb-4"
-          />
-          <Button title="Actualizar Contraseña" onPress={handleUpdatePassword} />
+              <Input
+                placeholder="Nueva contraseña"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={(text) => setNewPassword(text)}
+                bg="white"
+                rounded="md"
+                p={3}
+                marginBottom={2}
+                fontFamily="Inter-Regular"
+              />
+              <Input
+                placeholder="Confirmar nueva contraseña"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={(text) => setConfirmPassword(text)}
+                bg="white"
+                rounded="md"
+                p={3}
+                marginBottom={2}
+                fontFamily="Inter-Regular"
+              />
+              <Button
+                onPress={handleUpdatePassword}
+                bg="#6fc1d2"
+                _pressed={{ bg: '#7da09c' }}
+                isDisabled={!newPassword || !confirmPassword}
+                style={{ fontSize: 20 }} // Ajusta el tamaño de la fuente según sea necesario
+              >
+                Actualizar Contraseña
+              </Button>
 
-          {/* Eliminar Cuenta */}
-          <TextInput
-            placeholder="Escribe 'Eliminar Cuenta' para confirmar"
-            value={confirmationText}
-            onChangeText={(text) => setConfirmationText(text)}
-            className="bg-white border rounded-md p-3 mb-4"
-          />
-          <Button title="Eliminar Cuenta" onPress={handleDeleteAccount} />
-        </>
-      ) : (
-        // Botón para activar la edición del perfil
-        <Button title="Editar Perfil" onPress={() => setEditingProfile(true)} />
-      )}
-    </View>
+              <Input
+                placeholder="Escribe 'Eliminar Cuenta' para confirmar"
+                value={confirmationText}
+                onChangeText={(text) => setConfirmationText(text)}
+                bg="white"
+                rounded="md"
+                p={3}
+                marginBottom={2}
+                fontFamily="Inter-Regular"
+              />
+              <Button
+                onPress={handleDeleteAccount}
+                bg="#ef4444"
+                _pressed={{ bg: '#7da09c' }}
+                isDisabled={!confirmationText}
+                style={{ fontSize: 20 }} // Ajusta el tamaño de la fuente según sea necesario
+              >
+                Eliminar Cuenta
+              </Button>
+            </>
+          ) : (
+            <Button onPress={() => setEditingProfile(true)} fontFamily="Inter-Regular">
+              Editar Perfil
+            </Button>
+          )}
+
+          {/* Logout */}
+          <Pressable onPress={handleLogout} marginTop={2}>
+            <Text
+              fontSize="lg"
+              color="#10699b"
+              fontFamily="Inter-Regular"
+              style={{ fontSize: 16, textAlign: 'center' }}
+            >
+              Logout
+            </Text>
+          </Pressable>
+        </VStack>
+
+        {/* Modal para mostrar alertas */}
+        <Modal isOpen={modalVisible} onClose={closeModal}>
+          <Modal.Content>
+            <Modal.CloseButton />
+            <Modal.Header>{modalContent.title}</Modal.Header>
+            <Modal.Body>
+              <Text>{modalContent.message}</Text>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

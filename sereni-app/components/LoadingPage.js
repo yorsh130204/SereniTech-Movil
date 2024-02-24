@@ -10,7 +10,7 @@ const LoadingPage = ({ navigation }) => {
     const timeout = setTimeout(() => {
       // Navega a la página principal después de la carga
       navigation.navigate('Home');
-    }, 4000);
+    }, 2500);
 
     return () => clearTimeout(timeout); // Limpia el temporizador al desmontar el componente
   }, [navigation]);
