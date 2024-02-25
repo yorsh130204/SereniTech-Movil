@@ -4,7 +4,7 @@ import { Text, Platform, RefreshControl } from 'react-native';
 import { updateProfile, updatePassword, deleteUser, signOut } from 'firebase/auth';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
 import { ref, get, set } from 'firebase/database';
-import { Image, Input, VStack, Button, Pressable, ScrollView, KeyboardAvoidingView, Modal } from 'native-base';
+import { Image, Input, VStack, Button, Pressable, ScrollView, KeyboardAvoidingView, Modal, View, ChevronRightIcon, HStack, CloseIcon } from 'native-base';
 import profileImage from '../assets/img/users.png';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,8 +15,10 @@ const AccountSection = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmationText, setConfirmationText] = useState('');
   const [currentName, setCurrentName] = useState('');
+  const [currentEmail, setCurrentEmail] = useState('');
   const [editingProfile, setEditingProfile] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [modalColor, setModalColor] = useState('');
 
   const currentUser = FIREBASE_AUTH.currentUser;
 
@@ -31,6 +33,7 @@ const AccountSection = () => {
       if (userSnapshot.exists()) {
         const userData = userSnapshot.val();
         setCurrentName(userData.name);
+        setCurrentEmail(userData.email);
       }
     } catch (error) {
       console.error('Error al cargar el nombre actual:', error.message);
@@ -39,13 +42,29 @@ const AccountSection = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState({
-    status: '',
+    color: '',
     title: '',
     message: '',
   });
 
   const showAlert = (status, title, message) => {
+    let color;
+  
+    switch (status) {
+      case 'error':
+        color = '#ef4444';
+        break;
+      case 'success':
+        color = '#6fc1d2';
+        break;
+      // Otros casos según sea necesario
+  
+      default:
+        color = ''; // Color por defecto o vacío
+    }
+  
     setModalContent({ status, title, message });
+    setModalColor(color);
     setModalVisible(true);
   };
 
@@ -77,6 +96,7 @@ const AccountSection = () => {
 
       setRefreshing(true);
       showAlert('success', 'Éxito', 'Nombre actualizado exitosamente.');
+      setNewName('');
     } catch (error) {
       showAlert('error', 'Error', 'Error al actualizar el nombre: ' + error.message);
     } finally {
@@ -98,6 +118,7 @@ const AccountSection = () => {
     try {
       await updatePassword(currentUser, newPassword);
       showAlert('success', 'Éxito', 'Contraseña actualizada exitosamente.');
+      setNewPassword('');
       setRefreshing(true);
     } catch (error) {
       showAlert('error', 'Error', 'Error al actualizar la contraseña: ' + error.message);
@@ -113,6 +134,7 @@ const AccountSection = () => {
     try {
       await deleteUser(currentUser);
       showAlert('success', 'Éxito', 'Cuenta eliminada exitosamente.');
+      navigation.navigate('Home');
     } catch (error) {
       showAlert('error', 'Error', 'Error al eliminar la cuenta: ' + error.message);
     }
@@ -150,113 +172,147 @@ const AccountSection = () => {
             <Image
               source={profileImage}
               alt="Profile Image"
-              style={{ width: 100, height: 100, borderWidth: 2, borderColor: '#10699b', borderRadius: 50, marginBottom: 10}}
+              style={{ width: 100, height: 100, borderWidth: 2, borderColor: '#10699b', borderRadius: 50 }}
+              className="mt-6 mb-2"
             />
           )}
-
-          <Text
-            style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 2, color: '#10699b', fontFamily: 'Inter-Regular' }}
-          >
-            {currentName}
-          </Text>
+          <View className="flex items-center mb-4">
+            <Text className="mb-1 text-3xl font-bold">
+              {currentName}
+            </Text>
+            <Text className="mb-2 text-xl text-gray-500">
+              {currentEmail}
+            </Text>
+          </View>
 
           {editingProfile ? (
-            <>
-              <Input
-                placeholder={`Nuevo nombre (actual: ${currentName})`}
-                value={newName}
-                onChangeText={(text) => setNewName(text)}
-                className="bg-white rounded-lg p-3 mb-1/2"
-                style={{ fontFamily: 'Inter-Regular' }}
-              />
-              <Button
-                onPress={handleUpdateName}
-                bg="#6fc1d2"
-                _pressed={{ bg: '#7da09c' }}
-                isDisabled={!newName}
-                style={{ fontSize: 20 }} // Ajusta el tamaño de la fuente según sea necesario
-              >
-                Actualizar Nombre
-              </Button>
-
-              <Input
-                placeholder="Nueva contraseña"
-                secureTextEntry
-                value={newPassword}
-                onChangeText={(text) => setNewPassword(text)}
-                bg="white"
-                rounded="md"
-                p={3}
-                marginBottom={2}
-                fontFamily="Inter-Regular"
-              />
-              <Input
-                placeholder="Confirmar nueva contraseña"
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={(text) => setConfirmPassword(text)}
-                bg="white"
-                rounded="md"
-                p={3}
-                marginBottom={2}
-                fontFamily="Inter-Regular"
-              />
-              <Button
-                onPress={handleUpdatePassword}
-                bg="#6fc1d2"
-                _pressed={{ bg: '#7da09c' }}
-                isDisabled={!newPassword || !confirmPassword}
-                style={{ fontSize: 20 }} // Ajusta el tamaño de la fuente según sea necesario
-              >
-                Actualizar Contraseña
-              </Button>
-
-              <Input
-                placeholder="Escribe 'Eliminar Cuenta' para confirmar"
-                value={confirmationText}
-                onChangeText={(text) => setConfirmationText(text)}
-                bg="white"
-                rounded="md"
-                p={3}
-                marginBottom={2}
-                fontFamily="Inter-Regular"
-              />
-              <Button
-                onPress={handleDeleteAccount}
-                bg="#ef4444"
-                _pressed={{ bg: '#7da09c' }}
-                isDisabled={!confirmationText}
-                style={{ fontSize: 20 }} // Ajusta el tamaño de la fuente según sea necesario
-              >
-                Eliminar Cuenta
-              </Button>
-            </>
+          <>
+          <View className="flex items-center mb-2">
+            <Input
+              placeholder="Nuevo nombre: "
+              value={newName}
+              onChangeText={(text) => setNewName(text)}
+              bg="white"
+              rounded={0}
+              borderWidth={0}
+              borderBottomWidth={1}
+              borderColor="gray.400"
+              p={3}
+              mb={2}
+              fontFamily="Inter-Regular"
+              fontSize={15}
+            />
+            <Button
+              onPress={handleUpdateName}
+              bg="#6fc1d2"
+              _pressed={{ bg: '#7da09c' }}
+              isDisabled={!newName}
+              style={{ fontSize: 20, marginBottom: 10 }} // Ajusta el tamaño de la fuente y el margen inferior
+            >
+              Actualizar Nombre
+            </Button>
+          </View>
+          <View className="flex items-center mb-2">
+            <Input
+              placeholder="Nueva contraseña"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={(text) => setNewPassword(text)}
+              bg="white"
+              rounded={0}
+              borderWidth={0}
+              borderBottomWidth={1}
+              borderColor="gray.400"
+              p={3}
+              mb={2}
+              fontFamily="Inter-Regular"
+              fontSize={15}
+            />
+            <Input
+              placeholder="Confirmar nueva contraseña"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={(text) => setConfirmPassword(text)}
+              bg="white"
+              rounded={0}
+              borderWidth={0}
+              borderBottomWidth={1}
+              borderColor="gray.400"
+              p={3}
+              mb={2}
+              fontFamily="Inter-Regular"
+              fontSize={15}
+            />
+            <Button
+              onPress={handleUpdatePassword}
+              bg="#6fc1d2"
+              _pressed={{ bg: '#7da09c' }}
+              isDisabled={!newPassword || !confirmPassword}
+              style={{ fontSize: 20, marginBottom: 10 }}
+            >
+              Actualizar Contraseña
+            </Button>
+          </View>
+          <View className="flex items-center mb-2">
+            <Input
+              placeholder="Escribe 'Eliminar Cuenta' para confirmar"
+              value={confirmationText}
+              onChangeText={(text) => setConfirmationText(text)}
+              bg="white"
+              rounded={0}
+              borderWidth={0}
+              borderBottomWidth={1}
+              borderColor="gray.400"
+              p={3}
+              mb={2}
+              fontFamily="Inter-Regular"
+              fontSize={15}
+            />
+            <Button
+              onPress={handleDeleteAccount}
+              bg="#ef4444"
+              _pressed={{ bg: '#7da09c' }}
+              isDisabled={!confirmationText}
+              style={{ fontSize: 20 }}
+            >
+              Eliminar Cuenta
+            </Button>
+          </View>
+          </>
           ) : (
-            <Button onPress={() => setEditingProfile(true)} fontFamily="Inter-Regular">
-              Editar Perfil
+            <Button
+              onPress={() => setEditingProfile(true)}
+              className="bg-[#10699b] rounded-3xl pl-6 pr-6 hover:bg-gray-600"
+            >
+              <HStack space={2} alignItems="center">
+                <Text className="text-white text-lg mr-2">Editar Perfil</Text>
+                <ChevronRightIcon color="white" />
+              </HStack>
             </Button>
           )}
 
           {/* Logout */}
-          <Pressable onPress={handleLogout} marginTop={2}>
-            <Text
-              fontSize="lg"
-              color="#10699b"
-              fontFamily="Inter-Regular"
-              style={{ fontSize: 16, textAlign: 'center' }}
-            >
-              Logout
-            </Text>
+          <Pressable 
+            onPress={handleLogout} 
+            marginTop={2}
+            className="pl-5 pr-5 py-2.5 bg-[#ef4444] rounded-3xl transition duration-300 hover:bg-gray-600 mt-3 mb-3"
+          >
+          <HStack space={2} alignItems="center">
+            <Text className="text-white text-lg mr-2">Cerrar Sesion</Text>
+            <CloseIcon color="white" />
+          </HStack>
           </Pressable>
         </VStack>
 
         {/* Modal para mostrar alertas */}
         <Modal isOpen={modalVisible} onClose={closeModal}>
           <Modal.Content>
-            <Modal.CloseButton />
-            <Modal.Header>{modalContent.title}</Modal.Header>
-            <Modal.Body>
-              <Text>{modalContent.message}</Text>
+            <Modal.CloseButton style={{ backgroundColor: "white", color: "blue" }} className="mt-1" />
+            <Modal.Header bg={modalColor}>
+              <Text style={{ color: 'white', fontSize: 28 }}>{modalContent.title}</Text>
+            </Modal.Header>
+            <Modal.Body bg={modalColor}>
+              <Text style={{ color: 'white', fontSize: 19, textAlign: 'center' }}>{modalContent.message}</Text>
             </Modal.Body>
           </Modal.Content>
         </Modal>
