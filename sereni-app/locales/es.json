@@ -47,6 +47,10 @@
         "updatePasswordSuccess": "Contraseña actualizada exitosamente.",
         "deleteAccountSuccess": "Cuenta eliminada exitosamente.",
         "logoutSuccess": "Cierre de sesión exitoso.",
-        "updateNameError": "Error al actualizar el nombre: "
+        "updateNameError": "Error al actualizar el nombre: ",
+        "updatePasswordError": "Error al actualizar la contraseña: ",
+        "nameTitle": "Nuevo nombre: ",
+        "passwordTitle": "Nueva contraseña: ",
+        "confirmPasswordTitle": "Confirmar nueva contraseña: "
     }
 }

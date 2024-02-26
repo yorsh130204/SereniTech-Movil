@@ -29,5 +29,28 @@
           "noti": "Notifications",
           "cuenta": "Account"
         }
+    },
+    "account": {
+        "editProfile": "Edit Profile",
+        "updateName": "Update Name",
+        "updatePassword": "Update Password",
+        "deleteAccount": "Delete Account",
+        "confirmDelete": "Type 'Delete Account' to confirm",
+        "logout": "Logout",
+        "success": "Success",
+        "error": "Error",
+        "confirmationTextError": "Incorrect confirmation text. Please type 'Delete Account'.",
+        "newNameError": "The new name field cannot be empty.",
+        "passwordMismatchError": "The new password and confirmation do not match.",
+        "newPasswordError": "The new password and confirmation fields cannot be empty.",
+        "updateNameSuccess": "Name updated successfully.",
+        "updatePasswordSuccess": "Password updated successfully.",
+        "deleteAccountSuccess": "Account deleted successfully.",
+        "logoutSuccess": "Logout successful.",
+        "updateNameError": "Error updating name: ",
+        "updatePasswordError": "Error updating password: ",
+        "nameTitle": "New name: ",
+        "passwordTitle": "New password: ",
+        "confirmPasswordTitle": "Confirm new password: "
     }
 }

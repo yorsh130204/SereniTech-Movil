@@ -98,7 +98,7 @@ const AccountSection = () => {
       }
 
       setRefreshing(true);
-      showAlert('success', t("account.success"), 'Nombre actualizado exitosamente.');
+      showAlert('success', t("account.success"), t("account.updateNameSuccess"));
       setNewName('');
     } catch (error) {
       showAlert('error', t("account.error"), t("account.updateNameError") + error.message);
@@ -109,34 +109,34 @@ const AccountSection = () => {
 
   const handleUpdatePassword = async () => {
     if (!newPassword || !confirmPassword) {
-      showAlert('error', t("account.error"), 'Los campos de nueva contraseña y confirmación no pueden estar vacíos.');
+      showAlert('error', t("account.error"), t("account.newPasswordError"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      showAlert('error', t("account.error"), 'La nueva contraseña y la confirmación no coinciden.');
+      showAlert('error', t("account.error"), t("account.passwordMismatchError"));
       return;
     }
 
     try {
       await updatePassword(currentUser, newPassword);
-      showAlert('success', 'Éxito', 'Contraseña actualizada exitosamente.');
+      showAlert('success', t("account.success"), t("account.updatePasswordSuccess"));
       setNewPassword('');
       setRefreshing(true);
     } catch (error) {
-      showAlert('error', t("account.error"), 'Error al actualizar la contraseña: ' + error.message);
+      showAlert('error', t("account.error"), t("account.updatePasswordError") + error.message);
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (!confirmationText || confirmationText.trim() !== 'Eliminar Cuenta') {
-      showAlert('error', t("account.error"), 'Texto de confirmación incorrecto. Por favor, escribe "Eliminar Cuenta".');
+    if (!confirmationText || confirmationText.trim() !== t("account.deleteAccount")) {
+      showAlert('error', t("account.error"), t("account.confirmationTextError"));
       return;
     }
 
     try {
       await deleteUser(currentUser);
-      showAlert('success', 'Éxito', 'Cuenta eliminada exitosamente.');
+      showAlert('success', t("account.success"), 'Cuenta eliminada exitosamente.');
       navigation.navigate('Home');
     } catch (error) {
       showAlert('error', t("account.error"), 'Error al eliminar la cuenta: ' + error.message);
@@ -146,7 +146,7 @@ const AccountSection = () => {
   const handleLogout = async () => {
     try {
       await signOut(FIREBASE_AUTH);
-      showAlert('success', 'Éxito', 'Cierre de sesión exitoso.');
+      showAlert('success', t("account.success"), 'Cierre de sesión exitoso.');
       navigation.navigate('Home');
     } catch (error) {
       showAlert('error', t("account.error"), 'Error al cerrar sesión: ' + error.message);
@@ -193,7 +193,7 @@ const AccountSection = () => {
             <>
             <View className="flex items-center mb-2">
               <Input
-                placeholder="Nuevo nombre: "
+                placeholder= {t("account.nameTitle")}
                 value={newName}
                 onChangeText={(text) => setNewName(text)}
                 bg="white"
@@ -213,12 +213,12 @@ const AccountSection = () => {
                 isDisabled={!newName}
                 style={{ fontSize: 20, marginBottom: 10 }} // Ajusta el tamaño de la fuente y el margen inferior
               >
-                Actualizar Nombre
+                {t("account.updateName")}
               </Button>
             </View>
             <View className="flex items-center mb-2">
               <Input
-                placeholder="Nueva contraseña"
+                placeholder={t("account.passwordTitle")}
                 secureTextEntry
                 value={newPassword}
                 onChangeText={(text) => setNewPassword(text)}
@@ -233,7 +233,7 @@ const AccountSection = () => {
                 fontSize={15}
               />
               <Input
-                placeholder="Confirmar nueva contraseña"
+                placeholder={t("account.confirmPasswordTitle")}
                 secureTextEntry
                 value={confirmPassword}
                 onChangeText={(text) => setConfirmPassword(text)}
@@ -254,12 +254,12 @@ const AccountSection = () => {
                 isDisabled={!newPassword || !confirmPassword}
                 style={{ fontSize: 20, marginBottom: 10 }}
               >
-                Actualizar Contraseña
+                {t("account.updatePassword")}
               </Button>
             </View>
             <View className="flex items-center mb-2">
               <Input
-                placeholder="Escribe 'Eliminar Cuenta' para confirmar"
+                placeholder={t("account.confirmDelete")}
                 value={confirmationText}
                 onChangeText={(text) => setConfirmationText(text)}
                 bg="white"
@@ -279,7 +279,7 @@ const AccountSection = () => {
                 isDisabled={!confirmationText}
                 style={{ fontSize: 20 }}
               >
-                Eliminar Cuenta
+                {t("account.deleteAccount")}
               </Button>
             </View>
             </>
@@ -289,7 +289,7 @@ const AccountSection = () => {
                 className="bg-[#10699b] rounded-3xl pl-6 pr-6 hover:bg-gray-600"
               >
                 <HStack space={2} alignItems="center">
-                  <Text className="text-white text-lg mr-2">Editar Perfil</Text>
+                  <Text className="text-white text-lg mr-2">{t("account.editProfile")}</Text>
                   <ChevronRightIcon color="white" />
                 </HStack>
               </Button>
@@ -299,10 +299,10 @@ const AccountSection = () => {
             <Pressable 
               onPress={handleLogout} 
               marginTop={2}
-              className="pl-5 pr-5 py-2.5 bg-[#ef4444] rounded-3xl transition duration-300 hover:bg-gray-600 mt-3 mb-3"
+              className="pl-5 pr-5 py-2.5 bg-[#ef4444] rounded-3xl transition duration-300 hover:bg-gray-600 mt-5 mb-6"
             >
             <HStack space={2} alignItems="center">
-              <Text className="text-white text-lg mr-2">Cerrar Sesion</Text>
+              <Text className="text-white text-lg mr-2">{t("account.logout")}</Text>
               <CloseIcon color="white" />
             </HStack>
             </Pressable>
