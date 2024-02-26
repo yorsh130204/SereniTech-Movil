@@ -3,16 +3,20 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 // Importa las pantallas
 import PulsoScreen from '../components/PulsoScreen';
 import GPSScreen from '../components/GPSScreen';
 import NotiScreen from '../components/NotiScreen';
 import CuentaScreen from '../components/CuentaScreen';
+import Translate from '../components/LanguageSwitcher';
 
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -59,7 +63,7 @@ const Home = () => {
       })}
     >
       <Tab.Screen
-        name="Pulso"
+        name={t("home.tabs.pulso")}
         component={PulsoScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -68,7 +72,7 @@ const Home = () => {
         }}
       />
       <Tab.Screen
-        name="GPS"
+        name={t("home.tabs.gps")}
         component={GPSScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -77,7 +81,7 @@ const Home = () => {
         }}
       />
       <Tab.Screen
-        name="Notificaciones"
+        name={t("home.tabs.noti")}
         component={NotiScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -86,7 +90,7 @@ const Home = () => {
         }}
       />
       <Tab.Screen
-        name="Cuenta"
+        name={t("home.tabs.cuenta")}
         component={CuentaScreen}
         options={{
           tabBarIcon: ({ color, size }) => (

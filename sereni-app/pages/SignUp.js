@@ -9,11 +9,14 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
+import { useTranslation } from 'react-i18next';
+import Translate from '../components/LanguageSwitcher';
 
 const windowWidth = Dimensions.get('screen').width;
 const windowHeight = Dimensions.get('screen').height;
 
 function Signup() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -104,112 +107,117 @@ function Signup() {
   }
 
   return (
-    <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    style={{ flex: 1 }}
-    >
-      <ScrollView className="bg-gray-200">
-      <View className="items-center bg-gray-200 dark:bg-gray-800" style={{ flex: 1 }}>
-        <View style={styles.containerSvg}>
-            <SvgTop 
-              style={{ height: windowHeight * 0.3}}
-            />            
-            <Animatable.Image
-              className="absolute top-10"
-              source={require('../assets/favicon.png')}
-              style={{ width: 250, height: 250 }}
-              animation="pulse"
-              easing="ease-out"
-              iterationCount="infinite"
-              duration={800}
-            />
-        </View>
-        <View className="items-center justify-center mt-4">
-          <Text 
-            className="text-[#042a59] text-left font-bold mt-2 mb-2"
-            style={{ fontSize: 50, fontFamily:"Inter-Regular"}}
-          >
-            ¡Registrate!
-          </Text>
-          <Text
-            className="text-gray-500 text-left"
-            style={{ fontSize: 18, fontFamily:"Inter-Regular"}}
-          >
-            Registrate para crear una cuenta
-          </Text>
-          <TextInput
-            className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-            placeholder="Nombre: (Ejemplo: Juan)"
-            value={name}
-            onChangeText={(text) => setName(text)}
-            style={{ fontFamily: 'Inter-Regular'}}
-          />
-          <TextInput 
-            className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-            placeholder="Correo: (ejemplo@correo.com)"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            style={{ fontFamily: 'Inter-Regular'}}
-          />
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TextInput 
-              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-              placeholder="Contraseña: (Minimo 8 caracteres)"
-              secureTextEntry={passwordVisibility}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              style={{ fontFamily: 'Inter-Regular'}}
-            />
-            <TouchableOpacity
-              style={{ marginLeft: -30, marginTop: 20 }} 
-              onPress={handlePasswordVisibility}
-            >
-              <Icon name={passwordRightIcon} size={25} color="#042a59"/>
-            </TouchableOpacity>
+    <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      >
+        <ScrollView className="bg-gray-200">
+        <View className="items-center bg-gray-200 dark:bg-gray-800" style={{ flex: 1 }}>
+          <View style={styles.containerSvg}>
+              <SvgTop 
+                style={{ height: windowHeight * 0.3}}
+              />            
+              <Animatable.Image
+                className="absolute top-10"
+                source={require('../assets/favicon.png')}
+                style={{ width: 250, height: 250 }}
+                animation="pulse"
+                easing="ease-out"
+                iterationCount="infinite"
+                duration={800}
+              />
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TextInput 
-              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
-              placeholder="Confirmar: (Minimo 8 caracteres)"
-              secureTextEntry={confirmPasswordVisibility}
-              value={confirmPassword}
-              onChangeText={(text) => setConfirmPassword(text)}
-              style={{ fontFamily: 'Inter-Regular'}}
-            />
-            <TouchableOpacity
-              style={{ marginLeft: -30, marginTop: 20 }}  
-              onPress={handleConfirmPasswordVisibility}
-            >
-              <Icon name={confirmPasswordRightIcon} size={25} color="#042a59"/>
-            </TouchableOpacity>
-          </View>
-          {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
-          <Text 
-            className="text-[#042a59] text-center font-bold mt-6"
-            style={{ fontSize: 16, fontFamily:"Inter-Regular"}}
-          >
-            ¿Ya tienes una cuenta?{' '}
+          <View className="items-center justify-center mt-4">
             <Text 
-              className="text-[#042a59] font-bold mt-1 underline"
-              style={{ fontSize: 16, fontFamily:"Inter-Regular"}}
-              onPress={irALogin}
+              className="text-[#042a59] text-left font-bold mt-2 mb-2"
+              style={{ fontSize: 50, fontFamily:"Inter-Regular"}}
             >
-              Iniciar Sesión
+              {t("signup.title")}
             </Text>
-          </Text>
+            <Text
+              className="text-gray-500 text-left"
+              style={{ fontSize: 18, fontFamily:"Inter-Regular"}}
+            >
+              {t("signup.subtitle")}
+            </Text>
+            <TextInput
+              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+              placeholder={t("signup.namePlaceholder")}
+              value={name}
+              onChangeText={(text) => setName(text)}
+              style={{ fontFamily: 'Inter-Regular'}}
+            />
+            <TextInput 
+              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+              placeholder={t("signup.emailPlaceholder")}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              style={{ fontFamily: 'Inter-Regular'}}
+            />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TextInput 
+                className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+                placeholder={t("signup.passwordPlaceholder")}
+                secureTextEntry={passwordVisibility}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                style={{ fontFamily: 'Inter-Regular'}}
+              />
+              <TouchableOpacity
+                style={{ marginLeft: -30, marginTop: 20 }} 
+                onPress={handlePasswordVisibility}
+              >
+                <Icon name={passwordRightIcon} size={25} color="#042a59"/>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TextInput 
+                className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+                placeholder={t("signup.confirmPasswordPlaceholder")}
+                secureTextEntry={confirmPasswordVisibility}
+                value={confirmPassword}
+                onChangeText={(text) => setConfirmPassword(text)}
+                style={{ fontFamily: 'Inter-Regular'}}
+              />
+              <TouchableOpacity
+                style={{ marginLeft: -30, marginTop: 20 }}  
+                onPress={handleConfirmPasswordVisibility}
+              >
+                <Icon name={confirmPasswordRightIcon} size={25} color="#042a59"/>
+              </TouchableOpacity>
+            </View>
+            {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
+            <Text 
+              className="text-[#042a59] text-center font-bold mt-6"
+              style={{ fontSize: 16, fontFamily:"Inter-Regular"}}
+            >
+              {t("signup.alreadyHaveAccount")}{' '}
+              <Text 
+                className="text-[#042a59] font-bold mt-1 underline"
+                style={{ fontSize: 16, fontFamily:"Inter-Regular"}}
+                onPress={irALogin}
+              >
+                {t("signup.loginLink")}
+              </Text>
+            </Text>
+          </View>
+          <TouchableOpacity
+            className="w-48 px-8 py-4 bg-gray-500 rounded-md transition duration-300 hover:bg-gray-600 mt-3 mb-10"
+            disabled={loading}
+            onPress={signup}
+          >
+            <Text className="text-lg font-medium text-center text-white" style={{ fontFamily:"Inter-Regular" }}>
+              {t("buttons.signup")}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          className="w-48 px-8 py-4 bg-gray-500 rounded-md transition duration-300 hover:bg-gray-600 mt-3 mb-10"
-          disabled={loading}
-          onPress={signup}
-        >
-          <Text className="text-lg font-medium text-center text-white" style={{ fontFamily:"Inter-Regular" }}>
-            Registrarse
-          </Text>
-        </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <View style={styles.translateContainer}>
+        <Translate />
       </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -219,5 +227,11 @@ const styles = StyleSheet.create({
   containerSvg: {
     justifyContent: 'flex-start',
     alignItems: 'center',
+  },
+  translateContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   }
 });

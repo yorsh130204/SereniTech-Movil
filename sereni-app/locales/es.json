@@ -1,0 +1,33 @@
+{
+    "test": "ES",
+    "welcome": {
+        "title": "¡Bienvenido!",
+        "subtitle": "Inicia Sesión en tu cuenta",
+        "emailPlaceholder": "Email: (ejemplo@correo.com)",
+        "passwordPlaceholder": "Contraseña: (Mínimo 8 caracteres)",
+        "noAccount": "¿No tienes una cuenta?",
+        "registerLink": "Regístrate"
+    },
+    "buttons": {
+        "login": "Iniciar Sesión",
+        "signup": "Registrarse"
+    },
+    "signup": {
+        "title": "¡Regístrate!",
+        "subtitle": "Regístrate para crear una cuenta",
+        "namePlaceholder": "Nombre: (Ejemplo: Juan)",
+        "emailPlaceholder": "Correo: (ejemplo@correo.com)",
+        "passwordPlaceholder": "Contraseña: (Mínimo 8 caracteres)",
+        "confirmPasswordPlaceholder": "Confirmar: (Mínimo 8 caracteres)",
+        "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+        "loginLink": "Iniciar Sesión"
+    },
+    "home": {
+        "tabs": {
+          "pulso": "Pulso",
+          "gps": "GPS",
+          "noti": "Notificaciones",
+          "cuenta": "Cuenta"
+        }
+    }
+}

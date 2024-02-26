@@ -1,0 +1,33 @@
+{
+    "test": "EN",
+    "welcome": {
+        "title": "Welcome!",
+        "subtitle": "Log in to your account",
+        "emailPlaceholder": "Email: (example@email.com)",
+        "passwordPlaceholder": "Password: (Minimum 8 characters)",
+        "noAccount": "Don't have an account?",
+        "registerLink": "Register"
+    },
+    "buttons": {
+        "login": "Log In",
+        "signup": "Sign Up"
+    },
+    "signup": {
+        "title": "Sign Up!",
+        "subtitle": "Sign up to create an account",
+        "namePlaceholder": "Name: (Example: John)",
+        "emailPlaceholder": "Email: (example@email.com)",
+        "passwordPlaceholder": "Password: (Minimum 8 characters)",
+        "confirmPasswordPlaceholder": "Confirm: (Minimum 8 characters)",
+        "alreadyHaveAccount": "Already have an account?",
+        "loginLink": "Log In"
+    },
+    "home": {
+        "tabs": {
+          "pulso": "Pulse",
+          "gps": "GPS",
+          "noti": "Notifications",
+          "cuenta": "Account"
+        }
+    }
+}
