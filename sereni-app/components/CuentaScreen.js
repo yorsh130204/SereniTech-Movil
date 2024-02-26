@@ -77,7 +77,7 @@ const AccountSection = () => {
 
   const handleUpdateName = async () => {
     if (!newName) {
-      showAlert('error', 'Error', 'El campo de nuevo nombre no puede estar vacío.');
+      showAlert('error', t("account.error"), t("account.newNameError"));
       return;
     }
 
@@ -98,10 +98,10 @@ const AccountSection = () => {
       }
 
       setRefreshing(true);
-      showAlert('success', 'Éxito', 'Nombre actualizado exitosamente.');
+      showAlert('success', t("account.success"), 'Nombre actualizado exitosamente.');
       setNewName('');
     } catch (error) {
-      showAlert('error', 'Error', 'Error al actualizar el nombre: ' + error.message);
+      showAlert('error', t("account.error"), t("account.updateNameError") + error.message);
     } finally {
       setTimeout(() => setRefreshing(false), 500);
     }
@@ -109,12 +109,12 @@ const AccountSection = () => {
 
   const handleUpdatePassword = async () => {
     if (!newPassword || !confirmPassword) {
-      showAlert('error', 'Error', 'Los campos de nueva contraseña y confirmación no pueden estar vacíos.');
+      showAlert('error', t("account.error"), 'Los campos de nueva contraseña y confirmación no pueden estar vacíos.');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      showAlert('error', 'Error', 'La nueva contraseña y la confirmación no coinciden.');
+      showAlert('error', t("account.error"), 'La nueva contraseña y la confirmación no coinciden.');
       return;
     }
 
@@ -124,13 +124,13 @@ const AccountSection = () => {
       setNewPassword('');
       setRefreshing(true);
     } catch (error) {
-      showAlert('error', 'Error', 'Error al actualizar la contraseña: ' + error.message);
+      showAlert('error', t("account.error"), 'Error al actualizar la contraseña: ' + error.message);
     }
   };
 
   const handleDeleteAccount = async () => {
     if (!confirmationText || confirmationText.trim() !== 'Eliminar Cuenta') {
-      showAlert('error', 'Error', 'Texto de confirmación incorrecto. Por favor, escribe "Eliminar Cuenta".');
+      showAlert('error', t("account.error"), 'Texto de confirmación incorrecto. Por favor, escribe "Eliminar Cuenta".');
       return;
     }
 
@@ -139,7 +139,7 @@ const AccountSection = () => {
       showAlert('success', 'Éxito', 'Cuenta eliminada exitosamente.');
       navigation.navigate('Home');
     } catch (error) {
-      showAlert('error', 'Error', 'Error al eliminar la cuenta: ' + error.message);
+      showAlert('error', t("account.error"), 'Error al eliminar la cuenta: ' + error.message);
     }
   };
 
@@ -149,7 +149,7 @@ const AccountSection = () => {
       showAlert('success', 'Éxito', 'Cierre de sesión exitoso.');
       navigation.navigate('Home');
     } catch (error) {
-      showAlert('error', 'Error', 'Error al cerrar sesión: ' + error.message);
+      showAlert('error', t("account.error"), 'Error al cerrar sesión: ' + error.message);
     }
   };
 

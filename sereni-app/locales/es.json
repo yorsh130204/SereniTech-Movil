@@ -29,5 +29,24 @@
           "noti": "Notificaciones",
           "cuenta": "Cuenta"
         }
+    },
+    "account": {
+        "editProfile": "Editar Perfil",
+        "updateName": "Actualizar Nombre",
+        "updatePassword": "Actualizar Contraseña",
+        "deleteAccount": "Eliminar Cuenta",
+        "confirmDelete": "Escribe 'Eliminar Cuenta' para confirmar",
+        "logout": "Cerrar Sesión",
+        "success": "Éxito",
+        "error": "Error",
+        "confirmationTextError": "Texto de confirmación incorrecto. Por favor, escribe 'Eliminar Cuenta'.",
+        "newNameError": "El campo de nuevo nombre no puede estar vacío.",
+        "passwordMismatchError": "La nueva contraseña y la confirmación no coinciden.",
+        "newPasswordError": "Los campos de nueva contraseña y confirmación no pueden estar vacíos.",
+        "updateNameSuccess": "Nombre actualizado exitosamente.",
+        "updatePasswordSuccess": "Contraseña actualizada exitosamente.",
+        "deleteAccountSuccess": "Cuenta eliminada exitosamente.",
+        "logoutSuccess": "Cierre de sesión exitoso.",
+        "updateNameError": "Error al actualizar el nombre: "
     }
 }
