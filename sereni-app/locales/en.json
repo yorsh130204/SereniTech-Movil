@@ -51,6 +51,7 @@
         "updatePasswordError": "Error updating password: ",
         "nameTitle": "New name: ",
         "passwordTitle": "New password: ",
-        "confirmPasswordTitle": "Confirm new password: "
+        "confirmPasswordTitle": "Confirm new password: ",
+        "actualName": "Error loading current name: "
     }
 }

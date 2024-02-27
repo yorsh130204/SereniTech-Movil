@@ -34,7 +34,7 @@ const GPSScreen = () => {
           }
         >
           <View className="flex-1 justify-between">
-            <Text className="items-center">Contenido de noti</Text>
+            <Text className="items-center">Contenido de gps</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

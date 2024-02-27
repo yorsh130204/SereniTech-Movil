@@ -51,6 +51,7 @@
         "updatePasswordError": "Error al actualizar la contraseña: ",
         "nameTitle": "Nuevo nombre: ",
         "passwordTitle": "Nueva contraseña: ",
-        "confirmPasswordTitle": "Confirmar nueva contraseña: "
+        "confirmPasswordTitle": "Confirmar nueva contraseña: ",
+        "actualName": "Error al cargar el nombre actual: "
     }
 }

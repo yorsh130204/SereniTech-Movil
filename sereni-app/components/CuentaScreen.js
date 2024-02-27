@@ -39,7 +39,7 @@ const AccountSection = () => {
         setCurrentEmail(userData.email);
       }
     } catch (error) {
-      console.error('Error al cargar el nombre actual:', error.message);
+      console.error(t("account.actualName"), error.message);
     }
   };
 
