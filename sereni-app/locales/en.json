@@ -52,6 +52,11 @@
         "nameTitle": "New name: ",
         "passwordTitle": "New password: ",
         "confirmPasswordTitle": "Confirm new password: ",
-        "actualName": "Error loading current name: "
-    }
+        "actualName": "Error loading current name: ",
+        "deleteAccountError": "Error deleting the account: ",
+        "logoutError": "Error logging out: "
+    },
+    "pulse": {
+        "title": "Last measurement:"
+    }    
 }

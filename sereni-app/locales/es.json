@@ -52,6 +52,11 @@
         "nameTitle": "Nuevo nombre: ",
         "passwordTitle": "Nueva contraseña: ",
         "confirmPasswordTitle": "Confirmar nueva contraseña: ",
-        "actualName": "Error al cargar el nombre actual: "
+        "actualName": "Error al cargar el nombre actual: ",
+        "deleteAccountError": "Error al eliminar la cuenta: ",
+        "logoutError": "Error al cerrar sesión: "
+    },
+    "pulse": {
+        "title": "Última medida:"
     }
 }

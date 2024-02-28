@@ -1,24 +1,57 @@
 // PulsoScreen.js
 import React, { useState, useEffect } from 'react';
-import { Text, RefreshControl, StyleSheet, View } from 'react-native';
+import { Text, RefreshControl, StyleSheet, Dimensions } from 'react-native';
 import { get, ref } from 'firebase/database';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
-import { ScrollView } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
-import { Circle, Defs, LinearGradient, Stop, Path, Svg } from 'react-native-svg';
-
+import { VStack, ScrollView, View, FavouriteIcon, WarningOutlineIcon } from 'native-base';
 import Translate from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
+import { Tooltip } from 'react-native-elements';
+
+// Obtener dimensiones de la pantalla
+const windowWidth = Dimensions.get('window').width;
+
+// Calcular un ancho relativo al tamaño de la pantalla
+const tooltipWidth = windowWidth * 0.8;
 
 const PulsoScreen = () => {
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const [actualPulse, setActualPulse] = useState(null);
+  const [pulseDuration, setPulseDuration] = useState(0);
+  const valorPulso = actualPulse?.valor || 0;
+  const valorMaximo = 200;
+  const porcentajeLlenado = (valorPulso / valorMaximo) * 100;  
 
   const currentUser = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
     loadActualPulse();
-  }, [refreshing]);
+    
+    const pulseRanges = [
+      { min: 0, max: 10, duration: 1800 },
+      { min: 10, max: 20, duration: 1600 },
+      { min: 20, max: 30, duration: 1400 },
+      { min: 30, max: 40, duration: 1200 },
+      { min: 40, max: 50, duration: 1000 },
+      { min: 50, max: 60, duration: 900 },
+      { min: 60, max: 70, duration: 800 },
+      { min: 70, max: 80, duration: 700 },
+      { min: 80, max: 100, duration: 600 },
+      { min: 100, max: 120, duration: 500 },
+      { min: 120, max: 140, duration: 400 },
+      { min: 140, max: 160, duration: 300 },
+      { min: 160, max: 180, duration: 200 },
+      { min: 180, max: 200, duration: 100 },
+    ];
+  
+    const pulseDuration = pulseRanges.find(
+      range => actualPulse?.valor >= range.min && actualPulse?.valor <= range.max
+    )?.duration || 0;
+  
+    setPulseDuration(pulseDuration);
+  }, [refreshing, actualPulse]);
 
   const loadActualPulse = async () => {
     try {
@@ -42,7 +75,16 @@ const PulsoScreen = () => {
           // Obtener el pulso más reciente
           const latestPulseKey = pulseKeys[0];
           const latestPulse = pulsesData[latestPulseKey];
-  
+
+          const stringValue = latestPulse.valor.toString(); // Convertir a cadena
+
+          if (stringValue.length === 1) {
+            latestPulse.valor = "00" + stringValue;
+          } else if (stringValue.length === 2) {
+            latestPulse.valor = "0" + stringValue;
+          } 
+          // No es necesario hacer nada si ya tiene tres dígitos
+
           // Actualizar el estado con el pulso más reciente
           setActualPulse(latestPulse);
         } else {
@@ -66,59 +108,70 @@ const PulsoScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
-        <Card style={styles.card}>
-          <Card.Content style={styles.cardContent}>
-            <Title style={styles.cardTitle}>Último pulso</Title>
-            <View style={styles.visualContainer}>
-              {/* Círculo lleno y animado */}
-              <Animatable.View
+        <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
+          <View className="items-center justify-center">
+            <Animatable.View 
+              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6" 
+              style={{ borderWidth: 16 }}
+            >
+            <View className="items-center justify-center flex-row h-full">
+            <View>
+              <Animatable.Text
+                className="text-center text-7xl mr-5"
                 animation="pulse"
                 easing="ease-out"
                 iterationCount="infinite"
-                style={styles.circleContainer}
+                duration={pulseDuration}
               >
-                <Svg height="200" width="200">
-                  <Defs>
-                    <LinearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <Stop offset="0%" style={{ stopColor: '#4F80E1', stopOpacity: 1 }} />
-                      <Stop offset="100%" style={{ stopColor: '#FFFFFF', stopOpacity: 1 }} />
-                    </LinearGradient>
-                  </Defs>
-                  <Circle cx="100" cy="100" r="95" fill="url(#gradient)" />
-                </Svg>
-                <View style={styles.pulseContainer}>
-                  <Animatable.Text
-                    animation="pulse"
-                    easing="ease-out"
-                    iterationCount="infinite"
-                    style={styles.pulseValue}
-                  >
-                    {actualPulse?.valor || 0}
-                  </Animatable.Text>
-                </View>
-              </Animatable.View>
+                {actualPulse?.valor || 0}
+              </Animatable.Text>
             </View>
-            {/* Ondas animadas debajo del corazón */}
-            <Animatable.View animation="fadeIn" easing="linear" iterationCount="infinite">
-              <View style={styles.wavesContainer}>
-                <Svg height="30" width="200">
-                  <Path
-                    d="M0 15 Q15 0 30 15 T60 15 T90 15 T120 15 T150 15 T180 15"
-                    fill="none"
-                    stroke="#FF0000"
-                  />
-                </Svg>
-              </View>
+            <View className="justify-center items-center">
+              <Animatable.Text
+                className="mb-2"
+                animation="pulse"
+                easing="ease-out"
+                iterationCount="infinite"
+                duration={pulseDuration}
+              >
+                <FavouriteIcon size={45} color={"#ef4444"} />
+              </Animatable.Text>
+              <Text className="text-center text-4xl font-light">BPM</Text>
+            </View>
+            </View>
             </Animatable.View>
-            <Paragraph style={styles.timestampText}>
-              Timestamp: {formatTimestamp(actualPulse?.timestamp)}
-            </Paragraph>
-          </Card.Content>
-        </Card>
+          </View>
+          <View className="w-full mb-2 mt-2">
+            <Text className="text-left text-gray-600 text-2xl font-light mb-3">{t("pulse.title")}</Text>
+            <View className="flex-row justify-between items-center" style={styles.timestampText}>
+              <Text className="text-3xl text-center text-gray-500 font-semibold">{actualPulse?.valor || 0}</Text> 
+              <View className="w-full">
+                <View className="mr-10 mb-2">
+                  <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
+                    {formatTimestamp(actualPulse?.timestamp)}&nbsp;
+                    <Tooltip width={tooltipWidth} height={'auto'} popover={
+                      <Text className="text-white text-justify p-2">
+                        El pulso normal en adultos en reposo es de <Text style={{ fontWeight: 'bold' }}>60-100 pulsaciones por minuto</Text>, 
+                        mientras que en niños y adolescentes tiende a ser más alto, entre <Text style={{ fontWeight: 'bold' }}>70-100 pulsaciones por minuto</Text>. 
+                        Estos valores pueden variar según la actividad física, el estrés y la condición física individual. 
+                        Consulta con un profesional de la salud para obtener información más específica sobre tu situación.
+                      </Text>
+                    }>
+                      <WarningOutlineIcon size={5} />
+                    </Tooltip>
+                  </Text>
+                </View>
+                <View className="ml-2 mr-10" style={{ width: 'auto', height: 5, backgroundColor: '#e0e0e0', borderRadius: 5 }}>
+                  <View className="text-right" style={{ width: `${porcentajeLlenado}%`, height: '100%', backgroundColor: '#ef4444', borderRadius: 5 }} />
+                </View>
+              </View>
+            </View>
+          </View>
+        </VStack>
       </ScrollView>
       <View style={styles.translateContainer}>
         <Translate />
@@ -133,57 +186,12 @@ const formatTimestamp = (timestamp) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F0F0F0',
-  },
-  card: {
-    width: '90%',
-    marginVertical: 16,
-    borderRadius: 20,
-    elevation: 4,
-  },
-  cardContent: {
-    alignItems: 'center',
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    color: '#333',
-  },
-  visualContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  circleContainer: {
-    alignItems: 'center',
-  },
-  pulseContainer: {
-    position: 'absolute',
-    top: '35%',
-  },
-  pulseValue: {
-    color: '#000',
-    fontSize: 40,
-    fontWeight: 'bold',
-  },
-  wavesContainer: {
-    marginTop: 10,
-  },
-  timestampText: {
-    marginTop: 10,
-    color: '#666',
-  },
   translateContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-  },
+  }
 });
 
 export default PulsoScreen;

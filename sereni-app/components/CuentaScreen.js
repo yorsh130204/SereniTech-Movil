@@ -136,20 +136,20 @@ const AccountSection = () => {
 
     try {
       await deleteUser(currentUser);
-      showAlert('success', t("account.success"), 'Cuenta eliminada exitosamente.');
+      showAlert('success', t("account.success"), t("account.deleteAccountSuccess"));
       navigation.navigate('Home');
     } catch (error) {
-      showAlert('error', t("account.error"), 'Error al eliminar la cuenta: ' + error.message);
+      showAlert('error', t("account.error"), t("account.deleteAccountError") + error.message);
     }
   };
 
   const handleLogout = async () => {
     try {
       await signOut(FIREBASE_AUTH);
-      showAlert('success', t("account.success"), 'Cierre de sesión exitoso.');
+      showAlert('success', t("account.success"), t("account.logoutSuccess"));
       navigation.navigate('Home');
     } catch (error) {
-      showAlert('error', t("account.error"), 'Error al cerrar sesión: ' + error.message);
+      showAlert('error', t("account.error"), t("account.logoutError") + error.message);
     }
   };
 
@@ -181,10 +181,10 @@ const AccountSection = () => {
               />
             )}
             <View className="flex items-center mb-4">
-              <Text className="mb-1 text-3xl font-bold">
+              <Text className="mb-1 text-3xl font-bold" style={{ textAlign: "center" }}>
                 {currentName}
               </Text>
-              <Text className="mb-2 text-xl text-gray-500">
+              <Text className="mb-2 text-xl text-gray-500" style={{ textAlign: "center" }}>
                 {currentEmail}
               </Text>
             </View>
