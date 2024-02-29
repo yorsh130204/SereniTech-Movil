@@ -57,6 +57,15 @@
         "logoutError": "Error logging out: "
     },
     "pulse": {
-        "title": "Last measurement:"
+        "title": "Last measurement:",
+        "normalPulseText": {
+          "intro": {
+            "text": "The normal pulse in adults at rest is",
+            "boldText": "60-100 beats per minute"
+          },
+          "childrenIntro": "while in children and adolescents, it tends to be higher, between",
+          "childrenBoldText": "70-100 beats per minute",
+          "conclusion": "These values may vary depending on physical activity, stress, and individual physical condition. Consult with a healthcare professional for more specific information about your situation."
+        }
     }    
 }

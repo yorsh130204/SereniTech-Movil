@@ -57,6 +57,15 @@
         "logoutError": "Error al cerrar sesión: "
     },
     "pulse": {
-        "title": "Última medida:"
+        "title": "Última medida:",
+        "normalPulseText": {
+            "intro": {
+              "text": "El pulso normal en adultos en reposo es de",
+              "boldText": "60-100 pulsaciones por minuto"
+            },
+            "childrenIntro": "mientras que en niños y adolescentes tiende a ser más alto, entre",
+            "childrenBoldText": "70-100 pulsaciones por minuto",
+            "conclusion": "Estos valores pueden variar según la actividad física, el estrés y la condición física individual. Consulta con un profesional de la salud para obtener información más específica sobre tu situación."
+        }
     }
 }

@@ -9,11 +9,8 @@ import Translate from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-native-elements';
 
-// Obtener dimensiones de la pantalla
 const windowWidth = Dimensions.get('window').width;
-
-// Calcular un ancho relativo al tamaño de la pantalla
-const tooltipWidth = windowWidth * 0.8;
+const windowHeight = Dimensions.get('window').height;
 
 const PulsoScreen = () => {
   const { t } = useTranslation();
@@ -145,20 +142,19 @@ const PulsoScreen = () => {
             </View>
             </Animatable.View>
           </View>
-          <View className="w-full mb-2 mt-2">
+          <View className="w-full mb-6 mt-8">
             <Text className="text-left text-gray-600 text-2xl font-light mb-3">{t("pulse.title")}</Text>
             <View className="flex-row justify-between items-center" style={styles.timestampText}>
               <Text className="text-3xl text-center text-gray-500 font-semibold">{actualPulse?.valor || 0}</Text> 
-              <View className="w-full">
-                <View className="mr-10 mb-2">
+              <View className="w-full p-4">
+                <View className="mr-10 mb-3">
                   <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
-                    {formatTimestamp(actualPulse?.timestamp)}&nbsp;
-                    <Tooltip width={tooltipWidth} height={'auto'} popover={
+                    {formatTimestamp(actualPulse?.timestamp)}&nbsp;&nbsp;
+                    <Tooltip width={windowWidth * 0.73} height={windowHeight * 0.33} popover={
                       <Text className="text-white text-justify p-2">
-                        El pulso normal en adultos en reposo es de <Text style={{ fontWeight: 'bold' }}>60-100 pulsaciones por minuto</Text>, 
-                        mientras que en niños y adolescentes tiende a ser más alto, entre <Text style={{ fontWeight: 'bold' }}>70-100 pulsaciones por minuto</Text>. 
-                        Estos valores pueden variar según la actividad física, el estrés y la condición física individual. 
-                        Consulta con un profesional de la salud para obtener información más específica sobre tu situación.
+                        {t("pulse.normalPulseText.intro.text")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.intro.boldText")}</Text>,&nbsp;
+                        {t("pulse.normalPulseText.childrenIntro")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.childrenBoldText")}</Text>.&nbsp;
+                        {t("pulse.normalPulseText.conclusion")}
                       </Text>
                     }>
                       <WarningOutlineIcon size={5} />
