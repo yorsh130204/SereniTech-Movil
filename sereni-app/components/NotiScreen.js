@@ -8,6 +8,7 @@ import { FIREBASE_DB, FIREBASE_AUTH } from '../firebase'; // Ajusta la ruta de i
 import Translate from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-native-elements';
+import registerNNPushToken from 'native-notify';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -18,10 +19,13 @@ const NotiScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [highPulseData, setHighPulseData] = useState([]);
   const currentUser = FIREBASE_AUTH.currentUser; // Asegúrate de haber importado FIREBASE_AUTH desde tu configuración de Firebase 
+  
+  registerNNPushToken(19929, '94w6SYN3UOdN7perom6xxo');
 
   useEffect(() => {
     if (currentUser) {
     loadHighPulseData();
+    
     } else {
       navigation.navigate('Home');
     }

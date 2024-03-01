@@ -11,7 +11,6 @@ import LoadingPage from './components/LoadingPage';
 import LandingPage from './pages/LandingPage';
 import SignUp from './pages/SignUp';
 import Home from './pages/Home';
-import PulsoScreen from './components/PulsoScreen';
 
 const Stack = createStackNavigator();
 

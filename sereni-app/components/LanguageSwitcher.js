@@ -31,7 +31,7 @@ const Translate = ({ refreshing, setRefreshing }) => {
   const hideModal = () => {
     Animated.timing(slideUpValue, {
       toValue: 300,
-      duration: 300,  // Ajusta la duración para que la animación sea suave
+      duration: 400,  // Ajusta la duración para que la animación sea suave
       useNativeDriver: false,
     }).start(() => {
       setVisible(false);

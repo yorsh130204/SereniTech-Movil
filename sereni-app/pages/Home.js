@@ -11,7 +11,6 @@ const PulsoScreen = lazy(() => import('../components/PulsoScreen'));
 const GPSScreen = lazy(() => import('../components/GPSScreen'));
 const NotiScreen = lazy(() => import('../components/NotiScreen'));
 const CuentaScreen = lazy(() => import('../components/CuentaScreen'));
-import Translate from '../components/LanguageSwitcher';
 
 const Tab = createBottomTabNavigator();
 

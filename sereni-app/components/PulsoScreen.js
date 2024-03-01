@@ -25,26 +25,26 @@ const PulsoScreen = () => {
 
   const currentUser = FIREBASE_AUTH.currentUser;
 
+  const pulseRanges = [
+    { min: 0, max: 10, duration: 1800 },
+    { min: 10, max: 20, duration: 1600 },
+    { min: 20, max: 30, duration: 1400 },
+    { min: 30, max: 40, duration: 1200 },
+    { min: 40, max: 50, duration: 1000 },
+    { min: 50, max: 60, duration: 900 },
+    { min: 60, max: 70, duration: 800 },
+    { min: 70, max: 80, duration: 700 },
+    { min: 80, max: 100, duration: 600 },
+    { min: 100, max: 120, duration: 500 },
+    { min: 120, max: 140, duration: 400 },
+    { min: 140, max: 160, duration: 300 },
+    { min: 160, max: 180, duration: 200 },
+    { min: 180, max: 200, duration: 100 },
+  ];
+
   useEffect(() => {
     if (currentUser) {
     loadActualPulse();
-    
-    const pulseRanges = [
-      { min: 0, max: 10, duration: 1800 },
-      { min: 10, max: 20, duration: 1600 },
-      { min: 20, max: 30, duration: 1400 },
-      { min: 30, max: 40, duration: 1200 },
-      { min: 40, max: 50, duration: 1000 },
-      { min: 50, max: 60, duration: 900 },
-      { min: 60, max: 70, duration: 800 },
-      { min: 70, max: 80, duration: 700 },
-      { min: 80, max: 100, duration: 600 },
-      { min: 100, max: 120, duration: 500 },
-      { min: 120, max: 140, duration: 400 },
-      { min: 140, max: 160, duration: 300 },
-      { min: 160, max: 180, duration: 200 },
-      { min: 180, max: 200, duration: 100 },
-    ];
   
     const pulseDuration = pulseRanges.find(
       range => actualPulse?.valor >= range.min && actualPulse?.valor <= range.max
