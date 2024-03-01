@@ -1,6 +1,6 @@
 //SignUp.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Dimensions, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -28,9 +28,10 @@ function Signup() {
   const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(true);
   const [passwordRightIcon, setPasswordRightIcon] = useState('eye');
   const [confirmPasswordRightIcon, setConfirmPasswordRightIcon] = useState('eye');
+  const [refreshing, setRefreshing] = useState(false);
 
   const signup = async () => {
-    setLoading(true);
+    setRefreshing(true);
     try {
       if (password !== confirmPassword) {
         throw new Error('Las contraseñas no coinciden');
@@ -59,7 +60,7 @@ function Signup() {
       console.error(error);
       setError(error.message);
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
   };
   
@@ -112,7 +113,7 @@ function Signup() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
       >
-        <ScrollView className="bg-gray-200">
+        <ScrollView className="bg-gray-200" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {}} />}>
         <View className="items-center bg-gray-200 dark:bg-gray-800" style={{ flex: 1 }}>
           <View style={styles.containerSvg}>
               <SvgTop 
@@ -215,7 +216,7 @@ function Signup() {
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.translateContainer}>
-        <Translate />
+        <Translate refreshing={refreshing} setRefreshing={setRefreshing} />
       </View>
     </View>
   );

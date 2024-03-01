@@ -39,7 +39,7 @@ const GPSScreen = () => {
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.translateContainer}>
-        <Translate />
+        <Translate refreshing={refreshing} setRefreshing={setRefreshing} />
       </View>
     </View>
   );

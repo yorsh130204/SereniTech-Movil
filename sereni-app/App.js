@@ -48,7 +48,6 @@ export default function App() {
             <Stack.Screen name="Home" component={user ? Home : LandingPage} />
             <Stack.Screen name="Signup" component={SignUp} />
             <Stack.Screen name="Inicio" component={Home} />
-            <Stack.Screen name="PulsoScreen" component={PulsoScreen} />
           </Stack.Navigator>
         </NavigationContainer>
         <StatusBar style="auto" />

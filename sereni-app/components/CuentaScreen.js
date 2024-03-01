@@ -26,8 +26,11 @@ const AccountSection = () => {
   const currentUser = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
-    // Cargar el nombre actual cuando el componente se monta
+    if (currentUser) {
     loadCurrentName();
+    } else {
+      navigation.navigate('Home');
+    }
   }, [refreshing]);
 
   const loadCurrentName = async () => {
@@ -155,9 +158,17 @@ const AccountSection = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    // Realizar operaciones de carga de datos o actualización aquí
-    await loadCurrentName(); // Puedes adaptar esto según tus necesidades
-    setRefreshing(false);
+
+    try {
+      // Realizar operaciones de carga de datos o actualización aquí
+      await loadCurrentName(); // Puedes adaptar esto según tus necesidades
+    } catch (error) {
+      console.error('Error al actualizar datos durante el refrescamiento', error.message);
+    } finally {
+      // Cerrar la sección de edición de perfil después de la actualización
+      setEditingProfile(false);
+      setRefreshing(false);
+    }
   };
 
   return (
@@ -323,7 +334,7 @@ const AccountSection = () => {
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.translateContainer}>
-        <Translate />
+        <Translate refreshing={refreshing} setRefreshing={setRefreshing} />
       </View>
     </View>
   );

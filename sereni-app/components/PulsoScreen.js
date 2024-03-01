@@ -7,6 +7,7 @@ import * as Animatable from 'react-native-animatable';
 import { VStack, ScrollView, View, FavouriteIcon, WarningOutlineIcon } from 'native-base';
 import Translate from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import { Tooltip } from 'react-native-elements';
 
 const windowWidth = Dimensions.get('window').width;
@@ -14,6 +15,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const PulsoScreen = () => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [actualPulse, setActualPulse] = useState(null);
   const [pulseDuration, setPulseDuration] = useState(0);
@@ -24,6 +26,7 @@ const PulsoScreen = () => {
   const currentUser = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
+    if (currentUser) {
     loadActualPulse();
     
     const pulseRanges = [
@@ -48,6 +51,9 @@ const PulsoScreen = () => {
     )?.duration || 0;
   
     setPulseDuration(pulseDuration);
+    } else {
+      navigation.navigate("Home");
+    }
   }, [refreshing, actualPulse]);
 
   const loadActualPulse = async () => {
@@ -117,32 +123,16 @@ const PulsoScreen = () => {
             >
             <View className="items-center justify-center flex-row h-full">
             <View>
-              <Animatable.Text
-                className="text-center text-7xl mr-5"
-                animation="pulse"
-                easing="ease-out"
-                iterationCount="infinite"
-                duration={pulseDuration}
-              >
-                {actualPulse?.valor || 0}
-              </Animatable.Text>
+              <PulseValue value={actualPulse?.valor || 0} duration={pulseDuration} />
             </View>
             <View className="justify-center items-center">
-              <Animatable.Text
-                className="mb-2"
-                animation="pulse"
-                easing="ease-out"
-                iterationCount="infinite"
-                duration={pulseDuration}
-              >
-                <FavouriteIcon size={45} color={"#ef4444"} />
-              </Animatable.Text>
+              <PulseIcon duration={pulseDuration} />
               <Text className="text-center text-4xl font-light">BPM</Text>
             </View>
             </View>
             </Animatable.View>
           </View>
-          <View className="w-full mb-6 mt-8">
+          <View className="w-full mb-7 mt-8">
             <Text className="text-left text-gray-600 text-2xl font-light mb-3">{t("pulse.title")}</Text>
             <View className="flex-row justify-between items-center" style={styles.timestampText}>
               <Text className="text-3xl text-center text-gray-500 font-semibold">{actualPulse?.valor || 0}</Text> 
@@ -170,7 +160,7 @@ const PulsoScreen = () => {
         </VStack>
       </ScrollView>
       <View style={styles.translateContainer}>
-        <Translate />
+        <Translate refreshing={refreshing} setRefreshing={setRefreshing} />
       </View>
     </View>
   );
@@ -180,6 +170,30 @@ const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 };
+
+const PulseValue = ({ value, duration }) => (
+  <Animatable.Text
+    className="text-center text-7xl mr-5"
+    animation="pulse"
+    easing="ease-out"
+    iterationCount="infinite"
+    duration={duration}  // Cambiado de pulseDuration a duration
+  >
+    {value}
+  </Animatable.Text>
+);
+
+const PulseIcon = ({ duration }) => (
+  <Animatable.View 
+    style={{ marginBottom: 2 }}
+    animation="pulse"
+    easing="ease-out"
+    iterationCount="infinite"
+    duration={duration}  // Cambiado de pulseDuration a duration
+  >
+    <FavouriteIcon size={45} color={"#ef4444"} />
+  </Animatable.View>
+);
 
 const styles = StyleSheet.create({
   translateContainer: {

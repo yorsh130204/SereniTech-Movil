@@ -14,12 +14,17 @@ const windowHeight = Dimensions.get('window').height;
 
 const NotiScreen = () => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [highPulseData, setHighPulseData] = useState([]);
   const currentUser = FIREBASE_AUTH.currentUser; // Asegúrate de haber importado FIREBASE_AUTH desde tu configuración de Firebase 
 
   useEffect(() => {
+    if (currentUser) {
     loadHighPulseData();
+    } else {
+      navigation.navigate('Home');
+    }
   }, [refreshing, highPulseData]);
 
   const handleRefresh = async () => {
@@ -116,7 +121,7 @@ const NotiScreen = () => {
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.translateContainer}>
-        <Translate />
+        <Translate refreshing={refreshing} setRefreshing={setRefreshing} />
       </View>
     </View>
   );

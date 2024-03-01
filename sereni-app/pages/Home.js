@@ -4,12 +4,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { lazy } from 'react';
 
 // Importa las pantallas
-import PulsoScreen from '../components/PulsoScreen';
-import GPSScreen from '../components/GPSScreen';
-import NotiScreen from '../components/NotiScreen';
-import CuentaScreen from '../components/CuentaScreen';
+const PulsoScreen = lazy(() => import('../components/PulsoScreen'));
+const GPSScreen = lazy(() => import('../components/GPSScreen'));
+const NotiScreen = lazy(() => import('../components/NotiScreen'));
+const CuentaScreen = lazy(() => import('../components/CuentaScreen'));
 import Translate from '../components/LanguageSwitcher';
 
 const Tab = createBottomTabNavigator();

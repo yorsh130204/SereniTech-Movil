@@ -1,19 +1,11 @@
 // LanguageSwitcher.js
-import React, { useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Animated,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated, TouchableWithoutFeedback } from 'react-native';
 import i18next, { languageResources } from '../services/i18next';
 import languageList from '../services/languagesList.json';
 import { Feather } from '@expo/vector-icons';
 
-const Translate = () => {
+const Translate = ({ refreshing, setRefreshing }) => {
   const [visible, setVisible] = useState(false);
   const slideUpValue = useRef(new Animated.Value(300)).current;
   const [buttonVisible, setButtonVisible] = useState(true);
@@ -23,6 +15,7 @@ const Translate = () => {
     i18next.changeLanguage(languageKey);
     setSelectedLanguage(languageKey);
     hideModal();
+    setRefreshing(true); // Aquí se actualiza el estado de refreshing cuando se selecciona un idioma
   };
 
   const showModal = () => {
@@ -38,7 +31,7 @@ const Translate = () => {
   const hideModal = () => {
     Animated.timing(slideUpValue, {
       toValue: 300,
-      duration: 300,
+      duration: 300,  // Ajusta la duración para que la animación sea suave
       useNativeDriver: false,
     }).start(() => {
       setVisible(false);
@@ -46,16 +39,24 @@ const Translate = () => {
     });
   };
 
+  useEffect(() => {
+    if (visible) {
+      showModal();
+    } else {
+      hideModal();
+    }
+  }, [visible]);
+
   return (
-    <TouchableWithoutFeedback onPress={hideModal}>
-      <View style={{ flex: 1, justifyContent: 'flex-end', padding: 20, position: 'relative', backgroundColor: "transparent" }}>
+    <TouchableWithoutFeedback onPress={() => setVisible(!visible)}>
+      <View style={{ flex: 1, justifyContent: 'flex-end', padding: 20, position: 'relative', backgroundColor: 'transparent' }}>
         {buttonVisible && (
           <TouchableOpacity
             style={styles.changeLanguageButton}
             className="bg-gray-300 rounded-full hover:bg-gray-400 transition duration-300"
-            onPress={visible ? hideModal : showModal}
+            onPress={() => setVisible(!visible)}
           >
-            <Feather name="globe" size={24} color="white" style={styles.icon} />
+            <Feather name="globe" size={24} color="gray" style={styles.icon} />
           </TouchableOpacity>
         )}
         <Animated.View
@@ -69,7 +70,7 @@ const Translate = () => {
         >
           <TouchableOpacity
             style={styles.closeButton}
-            onPress={hideModal}
+            onPress={() => setVisible(false)}
           >
             <Feather name="x" size={24} color="black" />
           </TouchableOpacity>

@@ -1,6 +1,6 @@
 //LandingPage.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, RefreshControl, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -24,9 +24,10 @@ function LandingPage() {
   const [loading, setLoading] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [passwordRightIcon, setPasswordRightIcon] = useState('eye');
+  const [refreshing, setRefreshing] = useState(false);
 
   const login = async () => {
-    setLoading(true);
+    setRefreshing(true);
     try {
       const response = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       console.log(response);
@@ -35,7 +36,7 @@ function LandingPage() {
       console.log(error);
       setError(error.message);
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
   }
 
@@ -81,7 +82,7 @@ function LandingPage() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
       >
-        <ScrollView className="bg-gray-200">
+        <ScrollView className="bg-gray-200" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {}} />}>
         <View className="items-center bg-gray-200 dark:bg-gray-800" style={{ flex: 1 }}>
           <View style={styles.containerSvg}>
               <SvgTop 
@@ -161,7 +162,7 @@ function LandingPage() {
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.translateContainer}>
-        <Translate />
+        <Translate refreshing={refreshing} setRefreshing={setRefreshing} />
       </View>
     </View>
   );
