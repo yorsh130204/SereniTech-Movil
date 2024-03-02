@@ -2828,6 +2828,13 @@
   resolved "https://registry.npmjs.org/@react-native-community/hooks/-/hooks-2.8.1.tgz"
   integrity sha512-DCmCIC0Gn9m6K0Mlg2MwNmTxMEpBu5lTLsI6b/XUAv/vLGa6o+X7RhCai4FWeqkjCU36+ZOwaLzDo4NBWMXaoQ==
 
+"@react-native-community/push-notification-ios@^1.10.1":
+  version "1.11.0"
+  resolved "https://registry.npmjs.org/@react-native-community/push-notification-ios/-/push-notification-ios-1.11.0.tgz"
+  integrity sha512-nfkUs8P2FeydOCR4r7BNmtGxAxI22YuGP6RmqWt6c8EEMUpqvIhNKWkRSFF3pHjkgJk2tpRb9wQhbezsqTyBvA==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-firebase/app@^18.8.0", "@react-native-firebase/app@18.9.0":
   version "18.9.0"
   resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-18.9.0.tgz"
@@ -5419,6 +5426,11 @@ expo-notifications@^0.27.6, expo-notifications@~0.27.6:
     expo-application "~5.8.0"
     expo-constants "~15.4.0"
     fs-extra "^9.1.0"
+
+expo-permissions@^14.4.0:
+  version "14.4.0"
+  resolved "https://registry.npmjs.org/expo-permissions/-/expo-permissions-14.4.0.tgz"
+  integrity sha512-oAcnJ7dlZhpBydK73cwomA2xofizayVUz+FW5REl7dMu7MYyeN/3aqhlpZ3mYddrxvG161bqu97MQr01UixUnw==
 
 expo-status-bar@~1.11.1:
   version "1.11.1"
@@ -9026,7 +9038,7 @@ react-native-elements@^3.4.3:
     react-native-ratings "8.0.4"
     react-native-size-matters "^0.3.1"
 
-"react-native-gesture-handler@>= 1.0.0":
+react-native-gesture-handler@*, "react-native-gesture-handler@>= 1.0.0":
   version "2.15.0"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.15.0.tgz"
   integrity sha512-cmMGW8k86o/xgVTBZZOPohvR5re4Vh65PUxH4HbBBJAYTog4aN4wTVTUlnoky01HuSN8/X4h3tI/K3XLPoDnsg==
@@ -9067,6 +9079,11 @@ react-native-localize@^3.0.6:
   dependencies:
     prop-types "^15.5.9"
 
+react-native-notifier@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.npmjs.org/react-native-notifier/-/react-native-notifier-1.9.0.tgz"
+  integrity sha512-p9NpDCCSNNpfiJTRSu2rtSGGxekejDWSh3mX5rvjMllGCPyoJS3d36x9O+roYcH8qSqLf4QDcmwCMSUuaGTgXg==
+
 react-native-paper@^5.12.3:
   version "5.12.3"
   resolved "https://registry.npmjs.org/react-native-paper/-/react-native-paper-5.12.3.tgz"
@@ -9075,6 +9092,16 @@ react-native-paper@^5.12.3:
     "@callstack/react-theme-provider" "^3.0.9"
     color "^3.1.2"
     use-latest-callback "^0.1.5"
+
+react-native-permissions@^4.1.4:
+  version "4.1.4"
+  resolved "https://registry.npmjs.org/react-native-permissions/-/react-native-permissions-4.1.4.tgz"
+  integrity sha512-el6u90VZNFDEtmHpSheirwRhGvs6M5rSZcoqIqB128IPO00f2c1q+PP4kEaM1u19Q0ldQ+R+S7C/l8Zrduy6JQ==
+
+react-native-push-notification@^8.1.1:
+  version "8.1.1"
+  resolved "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
+  integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
 
 react-native-ratings@8.0.4:
   version "8.0.4"
@@ -9131,7 +9158,7 @@ react-native-vector-icons@^7.1.0:
     prop-types "^15.7.2"
     yargs "^15.0.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.55.0, react-native@>=0.59, react-native@>=0.70.0, react-native@0.73.4:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.33, react-native@>=0.55.0, react-native@>=0.58.4, react-native@>=0.59, react-native@>=0.70.0, react-native@0.73.4:
   version "0.73.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.4.tgz"
   integrity sha512-VtS+Yr6OOTIuJGDECIYWzNU8QpJjASQYvMtfa/Hvm/2/h5GdB6W9H9TOmh13x07Lj4AOhNMx3XSsz6TdrO4jIg==
@@ -9188,7 +9215,7 @@ react-shallow-renderer@^16.15.0:
     object-assign "^4.1.1"
     react-is "^16.12.0 || ^17.0.0 || ^18.0.0"
 
-react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", react@^18, react@^18.2.0, "react@>= 16.8.0", react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=16.8.6, react@>=17.0.0, react@>=18.1.0, react@18.2.0:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", react@^18, react@^18.2.0, "react@>= 16.8.0", react@>=16.3.0, react@>=16.6.3, react@>=16.8, react@>=16.8.0, react@>=16.8.6, react@>=17.0.0, react@>=18.1.0, react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
