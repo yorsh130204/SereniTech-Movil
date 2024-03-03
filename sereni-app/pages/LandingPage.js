@@ -59,7 +59,7 @@ function LandingPage() {
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         width={windowWidth}
-        height={windowWidth * 323 / 355}
+        height={windowWidth * 333 / 355}
         fill="none"
       >
         <Path
@@ -98,7 +98,7 @@ function LandingPage() {
                 duration={800}
               />
           </View>
-          <View className="items-center justify-center mt-4">
+          <View className="items-center justify-center mt-1">
             <Text 
               className="text-[#042a59] text-left font-bold mt-2 mb-2"
               style={{ fontSize: 50, fontFamily: 'Inter-Regular'}}
@@ -112,7 +112,7 @@ function LandingPage() {
               {t("welcome.subtitle")}
             </Text>
             <TextInput 
-              className="bg-white border-2 border-white w-80 h-12 mt-5 p-3 rounded-2xl"
+              className="bg-white border-2 border-white w-80 h-12 mt-7 p-3 rounded-2xl"
               placeholder={t("welcome.emailPlaceholder")}
               value={email}
               onChangeText={(text) => setEmail(text)}
@@ -128,10 +128,10 @@ function LandingPage() {
                 style={{ fontFamily: 'Inter-Regular'}}
               />
               <TouchableOpacity
-                style={{ marginLeft: -30, marginTop: 20 }} 
+                style={{ marginLeft: -30, marginTop: 20, marginRight: 8}} 
                 onPress={handlePasswordVisibility}
               >
-                <Icon name={passwordRightIcon} size={25} color="#042a59"/>
+                <Icon name={passwordRightIcon} size={22} color="#042a59"/>
               </TouchableOpacity>
             </View>
             {error && <Text style={{ color: 'red', marginTop: 8 }}>{error}</Text>}
@@ -150,7 +150,7 @@ function LandingPage() {
             </Text>
           </View>
           <TouchableOpacity
-            className="w-48 px-8 py-4 bg-gray-500 rounded-md transition duration-300 hover:bg-gray-600 mt-3 mb-6"
+            className="w-auto px-8 py-4 bg-gray-500 rounded-md transition duration-300 hover:bg-gray-600 mt-6 mb-6"
             disabled={loading}
             onPress={login}
           >
