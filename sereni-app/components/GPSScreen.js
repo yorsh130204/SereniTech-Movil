@@ -28,59 +28,63 @@ const GPSScreen = () => {
   const currentUser = FIREBASE_AUTH.currentUser;
   const [isComponentActive, setIsComponentActive] = useState(false);
 
-  const loadHighLocalizationData = useCallback(async () => {
-    try {
-      if (currentUser && isComponentActive) {
-        const localizationRef = ref(FIREBASE_DB, `users/${currentUser.uid}/localization`);
-        const unsubscribe = onValue(localizationRef, (snapshot) => {
-          if (snapshot.exists()) {
-            const localizationData = snapshot.val();
+const loadHighLocalizationData = useCallback(async () => {
+  try {
+    if (currentUser && isComponentActive) {
+      const localizationRef = ref(FIREBASE_DB, `users/${currentUser.uid}/localization`);
+      const unsubscribe = onValue(localizationRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const localizationData = snapshot.val();
 
-            if (localizationData) {
-                  const localKey = Object.sort((a, b) => {
-                    const timestampA = new Date(localizationData[a].timestamp);
-                    const timestampB = new Date(localizationData[b].timestamp);
-                    return timestampB - timestampA;
-                  });
+          if (localizationData) {
+            // Obtener las claves locales y ordenarlas por timestamp
+            const localKeys = Object.keys(localizationData).sort((a, b) => {
+              const timestampA = new Date(localizationData[a].timestamp);
+              const timestampB = new Date(localizationData[b].timestamp);
+              return timestampB - timestampA;
+            });
 
-                  const latestLocalizationKey = localKey[0];
-                  const latestLocalization = localizationData[latestLocalizationKey];
+            // Obtener el último elemento ordenado
+            const latestLocalizationKey = localKeys[0];
+            const latestLocalization = localizationData[latestLocalizationKey];
 
-                  const localizationValue = latestLocalization.link;
-                  const [latitude, longitude] = extractLatLongFromLink(localizationValue);
-  
-                  setHighLocalizationData.push([
-                  {
-                    key,
-                    link: localizationValue,
-                    latitude,
-                    longitude,
-                    timestamp,
-                  },
-                  ]);
-                } else {
-                  setHighLocalizationData([]);
-                }
-            } else {
-              setHighLocalizationData([]);
-            }
-          setRefreshing(false);
-        });
+            // Obtener la ubicación correspondiente al timestamp más reciente
+            const localizationValue = latestLocalization.link;
+            const [latitude, longitude] = extractLatLongFromLink(localizationValue);
 
-        // Limpiar el evento de escucha cuando el componente se desmonta o desactiva
-        return () => {
-          off(localizationRef, 'value', unsubscribe);
-        };
-      }
-    } catch (error) {
-      console.error(
-        'Error al cargar los datos de localización alta',
-        error.message
-      );
-    } finally {
-      setRefreshing(false);
+            // Actualizar el estado con la ubicación más reciente
+            setHighLocalizationData([
+              {
+                key: latestLocalizationKey,
+                link: localizationValue,
+                latitude,
+                longitude,
+                timestamp: latestLocalization.timestamp,
+              },
+            ]);
+          } else {
+            setHighLocalizationData([]);
+          }
+        } else {
+          setHighLocalizationData([]);
+        }
+        setRefreshing(false);
+      });
+
+      // Limpiar el evento de escucha cuando el componente se desmonta o desactiva
+      return () => {
+        off(localizationRef, 'value', unsubscribe);
+      };
     }
-  }, [currentUser, isComponentActive]);
+  } catch (error) {
+    console.error(
+      'Error al cargar los datos de localización alta',
+      error.message
+    );
+  } finally {
+    setRefreshing(false);
+  }
+}, [currentUser, isComponentActive]);
 
   const extractLatLongFromLink = (link) => {
     const match = link.match(/place\/([-0-9.]+),([-0-9.]+)/);
