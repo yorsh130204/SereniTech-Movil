@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { RefreshControl, StyleSheet, Linking, Dimensions } from 'react-native';
+import { RefreshControl, StyleSheet, Linking, Dimensions, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { ScrollView, View, Button } from 'native-base';
 import { ref, onValue, off } from 'firebase/database';
@@ -192,11 +192,11 @@ const GPSScreen = () => {
           </MapView>
           <View style={styles.buttonContainer}>
             <Button
-              className="bg-gray-400 hover:bg-gray-500 transition duration-300 w-auto h-auto rounded-3xl"
+              className="bg-gray-400 hover:bg-gray-200 transition duration-300 w-auto h-auto rounded-3xl shadow-xl"
               onPress={openMapInExternalApp}
               colorScheme="info"
             >
-              {t('ubication.googleMaps')}
+              <Text className="text-white text-lg p-1">{t('ubication.googleMaps')}</Text>
             </Button>
           </View>
         </VStack>
@@ -219,8 +219,10 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
     height: windowHeight * 0.60,
-    width: '90%',
+    width: '95%',
     borderRadius: 15,
+    borderColor: '#8BC34A',  // Cambia el color del borde a verde
+    borderWidth: 2,        // Ajusta el ancho del borde según tus preferencias
   },
   translateContainer: {
     position: 'absolute',

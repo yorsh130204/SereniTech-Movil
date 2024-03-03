@@ -101,14 +101,14 @@ const NotiScreen = () => {
       const porcentajeLlenado = (valorPulso / valorMaximo) * 100;
 
       return (
-        <View key={pulse.key} style={styles.pulseCard} className="bg-red-200 p-4">
+        <View key={pulse.key} style={styles.pulseCard} className="bg-red-100 p-4 shadow-sm">
           <View className="flex-row justify-between items-center" style={styles.timestampText}>
             <Text className="text-3xl text-left text-gray-900/70 font-semibold">{pulse.valor}</Text>
             <View className="w-full p-2">
               <View className="mr-12 mb-3">
                 <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
                   {formatTimestamp(pulse.timestamp)}&nbsp;&nbsp;
-                  <Tooltip width={windowWidth * 0.73} height={windowHeight * 0.33} popover={
+                  <Tooltip width={windowWidth * 0.83} height={windowHeight * 0.35} popover={
                     <Text className="text-white text-justify p-2">
                       {/* Asegúrate de tener estas traducciones definidas en tu archivo de idiomas */}
                       {t("pulse.normalPulseText.intro.text")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.intro.boldText")}</Text>,&nbsp;
@@ -141,7 +141,7 @@ const NotiScreen = () => {
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-        <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={8} alignItems="center">
+        <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
           <View className="flex-row justify-between w-full mb-1 mt-2">
             <Text className="text-xl text-left text-gray-900/70 font-semibold">
               {t("home.tabs.pulso")}
@@ -151,7 +151,6 @@ const NotiScreen = () => {
             </Text>
           </View>
           {renderHighPulseCards()}
-          <Button title="Enviar Notificación" onPress={enviarNotificacion} />
         </VStack>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -172,7 +171,7 @@ const styles = StyleSheet.create({
   pulseCard: {
     marginVertical: 8,
     borderRadius: 8,
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: '#e0e0e0',
     margin: 10,
   },

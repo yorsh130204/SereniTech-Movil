@@ -129,7 +129,7 @@ const PulsoScreen = () => {
         <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
           <View className="items-center justify-center">
             <Animatable.View
-              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6 p-10"
+              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6"
               style={{ borderWidth: 16 }}
             >
               <View className="items-center justify-center flex-row h-full">
@@ -145,14 +145,14 @@ const PulsoScreen = () => {
           </View>
           <View className="w-full mb-7 mt-8">
             <Text className="text-left text-gray-600 text-2xl font-light mb-3">{t("pulse.title")}</Text>
-            <View className="flex-row justify-between items-center" style={styles.timestampText}>
+            <View className="flex-row justify-between items-center bg-gray-50 p-4 shadow-xl" style={styles.pulseCard}>
               <Text className="text-3xl text-center text-gray-500 font-semibold">{actualPulse?.valor || 0}</Text>
               <View className="w-full p-4">
                 <View className="mr-10 mb-3">
                   <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
                     {formatTimestamp(actualPulse?.timestamp)}&nbsp;&nbsp;
-                    <Tooltip width={windowWidth * 0.73} height={windowHeight * 0.33} popover={
-                      <Text className="text-white text-justify p-2">
+                    <Tooltip width={windowWidth * 0.70} height={windowHeight * 0.40} popover={
+                      <Text className="text-white p-2 text-justify">
                         {t("pulse.normalPulseText.intro.text")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.intro.boldText")}</Text>,&nbsp;
                         {t("pulse.normalPulseText.childrenIntro")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.childrenBoldText")}</Text>.&nbsp;
                         {t("pulse.normalPulseText.conclusion")}
@@ -212,7 +212,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  }
+  },
+  pulseCard: {
+    marginVertical:12,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "transparent",
+    margin: 1,
+  },
 });
 
 export default PulsoScreen;
