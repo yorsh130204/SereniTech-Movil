@@ -1,7 +1,7 @@
 // PulsoScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Text, RefreshControl, StyleSheet, Dimensions } from 'react-native';
-import { get, ref } from 'firebase/database';
+import { get, ref, onValue, off } from 'firebase/database';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
 import * as Animatable from 'react-native-animatable';
 import { VStack, ScrollView, View, FavouriteIcon, WarningOutlineIcon } from 'native-base';
@@ -15,13 +15,11 @@ const windowHeight = Dimensions.get('window').height;
 
 const PulsoScreen = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [actualPulse, setActualPulse] = useState(null);
   const [pulseDuration, setPulseDuration] = useState(0);
-  const valorPulso = actualPulse?.valor || 0;
-  const valorMaximo = 200;
-  const porcentajeLlenado = (valorPulso / valorMaximo) * 100;  
+  const [isComponentActive, setIsComponentActive] = useState(false);
+  const [porcentajeLlenado, setPorcentajeLlenado] = useState(0); // Agregado estado para porcentajeLlenado
 
   const currentUser = FIREBASE_AUTH.currentUser;
 
@@ -42,68 +40,82 @@ const PulsoScreen = () => {
     { min: 180, max: 200, duration: 100 },
   ];
 
-  useEffect(() => {
-    if (currentUser) {
-    loadActualPulse();
-  
-    const pulseDuration = pulseRanges.find(
-      range => actualPulse?.valor >= range.min && actualPulse?.valor <= range.max
-    )?.duration || 0;
-  
-    setPulseDuration(pulseDuration);
-    } else {
-      navigation.navigate("Home");
-    }
-  }, [refreshing, actualPulse]);
-
-  const loadActualPulse = async () => {
-    try {
+  const loadActualPulse = useCallback(() => {
+    if (currentUser && isComponentActive) {
       const pulsesRef = ref(FIREBASE_DB, `users/${currentUser.uid}/pulse`);
-      const pulsesSnapshot = await get(pulsesRef);
-  
-      if (pulsesSnapshot.exists()) {
-        const pulsesData = pulsesSnapshot.val();
-  
-        // Obtener las claves de los pulsos
-        const pulseKeys = Object.keys(pulsesData);
-  
-        if (pulseKeys.length > 0) {
-          // Ordenar las claves de pulsos por timestamp de forma descendente
-          pulseKeys.sort((a, b) => {
-            const timestampA = new Date(pulsesData[a].timestamp);
-            const timestampB = new Date(pulsesData[b].timestamp);
-            return timestampB - timestampA;
-          });
-  
-          // Obtener el pulso más reciente
-          const latestPulseKey = pulseKeys[0];
-          const latestPulse = pulsesData[latestPulseKey];
+      const unsubscribe = onValue(pulsesRef, (snapshot) => {
+        const pulsesData = snapshot.val();
 
-          const stringValue = latestPulse.valor.toString(); // Convertir a cadena
+        if (pulsesData) {
+          // Obtener las claves de los pulsos
+          const pulseKeys = Object.keys(pulsesData);
 
-          if (stringValue.length === 1) {
-            latestPulse.valor = "00" + stringValue;
-          } else if (stringValue.length === 2) {
-            latestPulse.valor = "0" + stringValue;
-          } 
-          // No es necesario hacer nada si ya tiene tres dígitos
+          if (pulseKeys.length > 0) {
+            // Ordenar las claves de pulsos por timestamp de forma descendente
+            pulseKeys.sort((a, b) => {
+              const timestampA = new Date(pulsesData[a].timestamp);
+              const timestampB = new Date(pulsesData[b].timestamp);
+              return timestampB - timestampA;
+            });
 
-          // Actualizar el estado con el pulso más reciente
-          setActualPulse(latestPulse);
+            // Obtener el pulso más reciente
+            const latestPulseKey = pulseKeys[0];
+            const latestPulse = pulsesData[latestPulseKey];
+
+            const stringValue = latestPulse.valor.toString(); // Convertir a cadena
+
+            if (stringValue.length === 1) {
+              latestPulse.valor = "00" + stringValue;
+            } else if (stringValue.length === 2) {
+              latestPulse.valor = "0" + stringValue;
+            }
+            // No es necesario hacer nada si ya tiene tres dígitos
+
+            // Actualizar el estado con el pulso más reciente
+            setActualPulse(latestPulse);
+
+            const pulseDuration = pulseRanges.find(
+              range => latestPulse.valor >= range.min && latestPulse.valor <= range.max
+            )?.duration || 0;
+
+            setPulseDuration(pulseDuration);
+            
+            // Calcular porcentaje de llenado
+            const nuevoPorcentajeLlenado = (latestPulse.valor / 200) * 100;
+            setPorcentajeLlenado(nuevoPorcentajeLlenado);
+          } else {
+            // Si no hay pulsos, puedes manejarlo de alguna manera (por ejemplo, establecer actualPulse en null)
+            setActualPulse(null);
+          }
         } else {
-          // Si no hay pulsos, puedes manejarlo de alguna manera (por ejemplo, establecer actualPulse en null)
           setActualPulse(null);
         }
-      } else {
-        setActualPulse(null);
-      }
-    } catch (error) {
-      console.error("Error al cargar el pulso actual", error.message);
-    } finally {
-      // Finalmente, detener la animación de carga
-      setRefreshing(false);
+
+        setRefreshing(false);
+      });
+
+      // Limpiar el evento de escucha cuando el componente se desmonta o desactiva
+      return () => {
+        off(pulsesRef, 'value', unsubscribe);
+      };
     }
-  };
+  }, [currentUser, isComponentActive]);
+
+  useEffect(() => {
+    setIsComponentActive(true);
+
+    // Limpiar el estado cuando el componente se desmonta o desactiva
+    return () => {
+      setIsComponentActive(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isComponentActive) {
+      setRefreshing(true);
+      loadActualPulse();
+    }
+  }, [isComponentActive, loadActualPulse]);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -117,25 +129,25 @@ const PulsoScreen = () => {
       >
         <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
           <View className="items-center justify-center">
-            <Animatable.View 
-              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6" 
+            <Animatable.View
+              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6"
               style={{ borderWidth: 16 }}
             >
-            <View className="items-center justify-center flex-row h-full">
-            <View>
-              <PulseValue value={actualPulse?.valor || 0} duration={pulseDuration} />
-            </View>
-            <View className="justify-center items-center">
-              <PulseIcon duration={pulseDuration} />
-              <Text className="text-center text-4xl font-light">BPM</Text>
-            </View>
-            </View>
+              <View className="items-center justify-center flex-row h-full">
+                <View>
+                  <PulseValue value={actualPulse?.valor || 0} duration={pulseDuration} />
+                </View>
+                <View className="justify-center items-center">
+                  <PulseIcon duration={pulseDuration} />
+                  <Text className="text-center text-4xl font-light">BPM</Text>
+                </View>
+              </View>
             </Animatable.View>
           </View>
           <View className="w-full mb-7 mt-8">
             <Text className="text-left text-gray-600 text-2xl font-light mb-3">{t("pulse.title")}</Text>
             <View className="flex-row justify-between items-center" style={styles.timestampText}>
-              <Text className="text-3xl text-center text-gray-500 font-semibold">{actualPulse?.valor || 0}</Text> 
+              <Text className="text-3xl text-center text-gray-500 font-semibold">{actualPulse?.valor || 0}</Text>
               <View className="w-full p-4">
                 <View className="mr-10 mb-3">
                   <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
@@ -184,7 +196,7 @@ const PulseValue = ({ value, duration }) => (
 );
 
 const PulseIcon = ({ duration }) => (
-  <Animatable.View 
+  <Animatable.View
     style={{ marginBottom: 2 }}
     animation="pulse"
     easing="ease-out"

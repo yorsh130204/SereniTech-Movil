@@ -15,7 +15,7 @@ const Translate = ({ refreshing, setRefreshing }) => {
     i18next.changeLanguage(languageKey);
     setSelectedLanguage(languageKey);
     hideModal();
-    setRefreshing(true); // Aquí se actualiza el estado de refreshing cuando se selecciona un idioma
+    setRefreshing(true);
   };
 
   const showModal = () => {
@@ -31,7 +31,7 @@ const Translate = ({ refreshing, setRefreshing }) => {
   const hideModal = () => {
     Animated.timing(slideUpValue, {
       toValue: 300,
-      duration: 400,  // Ajusta la duración para que la animación sea suave
+      duration: 400,
       useNativeDriver: false,
     }).start(() => {
       setVisible(false);
@@ -47,16 +47,23 @@ const Translate = ({ refreshing, setRefreshing }) => {
     }
   }, [visible]);
 
+  // Optimización: Cargar recursos solo cuando el componente es visible
+  useEffect(() => {
+    if (visible) {
+      // Lógica para cargar recursos aquí
+    }
+  }, [visible]);
+
   return (
     <TouchableWithoutFeedback onPress={() => setVisible(!visible)}>
       <View style={{ flex: 1, justifyContent: 'flex-end', padding: 20, position: 'relative', backgroundColor: 'transparent' }}>
         {buttonVisible && (
           <TouchableOpacity
             style={styles.changeLanguageButton}
-            className="bg-gray-300 rounded-full hover:bg-gray-400 transition duration-300"
+            className="bg-gray-300/60 rounded-full hover:bg-gray-400 transition duration-300"
             onPress={() => setVisible(!visible)}
           >
-            <Feather name="globe" size={24} color="gray" style={styles.icon} />
+            <Feather name="globe" size={24} color="rgba(128, 128, 128, 0.6)" style={styles.icon} />
           </TouchableOpacity>
         )}
         <Animated.View

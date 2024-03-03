@@ -20,7 +20,10 @@
         "passwordPlaceholder": "Contraseña: (Mínimo 8 caracteres)",
         "confirmPasswordPlaceholder": "Confirmar: (Mínimo 8 caracteres)",
         "alreadyHaveAccount": "¿Ya tienes una cuenta?",
-        "loginLink": "Iniciar Sesión"
+        "loginLink": "Iniciar Sesión",
+        "errorC1": "Las contraseñas no coinciden",
+        "errorC2": "La contraseña debe tener al menos 8 caracteres",
+        "errorC3": "Usuario creado exitosamente"
     },
     "home": {
         "tabs": {
@@ -67,5 +70,10 @@
             "childrenBoldText": "70-100 pulsaciones por minuto",
             "conclusion": "Estos valores pueden variar según la actividad física, el estrés y la condición física individual. Consulta con un profesional de la salud para obtener información más específica sobre tu situación."
         }
+    },
+    "ubication": {
+        "title": "Ubicación actual",
+        "date": "Fecha -",
+        "googleMaps": "Abrir en Google Maps"
     }
 }

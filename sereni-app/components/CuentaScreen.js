@@ -1,5 +1,5 @@
 //CuentaScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Text, Platform, RefreshControl, StyleSheet } from 'react-native';
 import { updateProfile, updatePassword, deleteUser, signOut } from 'firebase/auth';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
@@ -22,36 +22,50 @@ const AccountSection = () => {
   const [editingProfile, setEditingProfile] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [modalColor, setModalColor] = useState('');
-
-  const currentUser = FIREBASE_AUTH.currentUser;
-
-  useEffect(() => {
-    if (currentUser) {
-    loadCurrentName();
-    } else {
-      navigation.navigate('Home');
-    }
-  }, [refreshing]);
-
-  const loadCurrentName = async () => {
-    try {
-      const userSnapshot = await get(ref(FIREBASE_DB, `users/${currentUser.uid}`));
-      if (userSnapshot.exists()) {
-        const userData = userSnapshot.val();
-        setCurrentName(userData.name);
-        setCurrentEmail(userData.email);
-      }
-    } catch (error) {
-      console.error(t("account.actualName"), error.message);
-    }
-  };
-
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState({
     color: '',
     title: '',
     message: '',
   });
+  const [isComponentActive, setIsComponentActive] = useState(false);
+
+  const currentUser = FIREBASE_AUTH.currentUser;
+
+  useEffect(() => {
+    setIsComponentActive(true);
+
+    // Limpiar el estado cuando el componente se desmonta o desactiva
+    return () => {
+      setIsComponentActive(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isComponentActive) {
+      setRefreshing(true);
+      loadCurrentName();
+    }
+  }, [isComponentActive]);
+
+  const loadCurrentName = useCallback(async () => {
+    try {
+      if (currentUser && isComponentActive) {
+        const userSnapshot = await get(ref(FIREBASE_DB, `users/${currentUser.uid}`));
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+          setCurrentName(userData.name);
+          setCurrentEmail(userData.email);
+        }
+      } else {
+        navigation.navigate('Home');
+      }
+    } catch (error) {
+      console.error(t("account.actualName"), error.message);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [currentUser, isComponentActive]);
 
   const showAlert = (status, title, message) => {
     let color;

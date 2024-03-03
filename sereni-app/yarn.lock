@@ -3446,6 +3446,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@types/geojson@^7946.0.13":
+  version "7946.0.14"
+  resolved "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.14.tgz"
+  integrity sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==
+
 "@types/hammerjs@^2.0.36":
   version "2.0.45"
   resolved "https://registry.npmjs.org/@types/hammerjs/-/hammerjs-2.0.45.tgz"
@@ -9073,6 +9078,13 @@ react-native-localize@^3.0.6:
   resolved "https://registry.npmjs.org/react-native-localize/-/react-native-localize-3.0.6.tgz"
   integrity sha512-pfwwNKRfXcxp0LZEzj5oW2/uo5oZOhiQ4PYlg8uLlsl9pDLcWg03yLCHohTWKX02vE/BFz9hkrHT/nQtlO/iFg==
 
+react-native-maps@^1.10.3:
+  version "1.10.3"
+  resolved "https://registry.npmjs.org/react-native-maps/-/react-native-maps-1.10.3.tgz"
+  integrity sha512-P8/Viq5vgW9FRhvfDFQHxq02cZUcDJu6VbBZar7c/voGDbD5nrTIA0qlpiUAmrs1ikd8+7S4QjXQlorppBBMvA==
+  dependencies:
+    "@types/geojson" "^7946.0.13"
+
 "react-native-material-textfield@github:vishaljadav24/react-native-material-textfield":
   version "0.16.1"
   resolved "git+ssh://git@github.com/vishaljadav24/react-native-material-textfield.git#e2d155446ab9057fc7bf6251492fe445d47c07c2"
@@ -9158,7 +9170,7 @@ react-native-vector-icons@^7.1.0:
     prop-types "^15.7.2"
     yargs "^15.0.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.33, react-native@>=0.55.0, react-native@>=0.58.4, react-native@>=0.59, react-native@>=0.70.0, react-native@0.73.4:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@>= 0.64.3", react-native@>=0.33, react-native@>=0.55.0, react-native@>=0.58.4, react-native@>=0.59, react-native@>=0.70.0, react-native@0.73.4:
   version "0.73.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.4.tgz"
   integrity sha512-VtS+Yr6OOTIuJGDECIYWzNU8QpJjASQYvMtfa/Hvm/2/h5GdB6W9H9TOmh13x07Lj4AOhNMx3XSsz6TdrO4jIg==
@@ -9215,7 +9227,7 @@ react-shallow-renderer@^16.15.0:
     object-assign "^4.1.1"
     react-is "^16.12.0 || ^17.0.0 || ^18.0.0"
 
-react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", react@^18, react@^18.2.0, "react@>= 16.8.0", react@>=16.3.0, react@>=16.6.3, react@>=16.8, react@>=16.8.0, react@>=16.8.6, react@>=17.0.0, react@>=18.1.0, react@18.2.0:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", react@^18, react@^18.2.0, "react@>= 16.8.0", "react@>= 17.0.1", react@>=16.3.0, react@>=16.6.3, react@>=16.8, react@>=16.8.0, react@>=16.8.6, react@>=17.0.0, react@>=18.1.0, react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==

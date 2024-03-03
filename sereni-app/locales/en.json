@@ -20,7 +20,10 @@
         "passwordPlaceholder": "Password: (Minimum 8 characters)",
         "confirmPasswordPlaceholder": "Confirm: (Minimum 8 characters)",
         "alreadyHaveAccount": "Already have an account?",
-        "loginLink": "Log In"
+        "loginLink": "Log In",
+        "errorC1": "Passwords do not match",
+        "errorC2": "Password must be at least 8 characters long",
+        "errorC3": "User created successfully"
     },
     "home": {
         "tabs": {
@@ -67,5 +70,10 @@
           "childrenBoldText": "70-100 beats per minute",
           "conclusion": "These values may vary depending on physical activity, stress, and individual physical condition. Consult with a healthcare professional for more specific information about your situation."
         }
+    },
+    "ubication": {
+        "title": "Current Location",
+        "date": "Date -",
+        "googleMaps": "Open in Google Maps"
     }    
 }

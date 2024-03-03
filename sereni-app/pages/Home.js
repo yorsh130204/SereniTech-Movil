@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { lazy } from 'react';
 
 // Importa las pantallas
-const PulsoScreen = lazy(() => import('../components/PulsoScreen'));
-const GPSScreen = lazy(() => import('../components/GPSScreen'));
-const NotiScreen = lazy(() => import('../components/NotiScreen'));
-const CuentaScreen = lazy(() => import('../components/CuentaScreen'));
+import PulsoScreen from '../components/PulsoScreen';
+import GPSScreen from '../components/GPSScreen';
+import NotiScreen from '../components/NotiScreen';
+import CuentaScreen from '../components/CuentaScreen';
 
 const Tab = createBottomTabNavigator();
 

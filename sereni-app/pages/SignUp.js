@@ -34,11 +34,11 @@ function Signup() {
     setRefreshing(true);
     try {
       if (password !== confirmPassword) {
-        throw new Error('Las contraseñas no coinciden');
+        throw new Error(t('signup.errorC1'));
       }
 
       if (password.length < 8) {
-        throw new Error('La contraseña debe tener al menos 8 caracteres');
+        throw new Error(t('signup.errorC2'));
       }
   
       // Create user in authentication
@@ -54,7 +54,7 @@ function Signup() {
         // Other properties you want to store
       });
   
-      console.log('Usuario creado exitosamente');
+      console.log(t('signup.errorC3'));
       irAHome();
     } catch (error) {
       console.error(error);

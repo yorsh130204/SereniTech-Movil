@@ -1,14 +1,13 @@
 // NotiScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Platform, RefreshControl, StyleSheet, Dimensions } from 'react-native';
 import { View, Text, VStack, ScrollView, KeyboardAvoidingView, WarningOutlineIcon } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { ref, get } from 'firebase/database';
-import { FIREBASE_DB, FIREBASE_AUTH } from '../firebase'; // Ajusta la ruta de importación según la ubicación de tu archivo de configuración de Firebase
+import { FIREBASE_DB, FIREBASE_AUTH } from '../firebase';
 import Translate from './LanguageSwitcher';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-native-elements';
-import registerNNPushToken from 'native-notify';
+import { useTranslation } from 'react-i18next';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -18,18 +17,15 @@ const NotiScreen = () => {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [highPulseData, setHighPulseData] = useState([]);
-  const currentUser = FIREBASE_AUTH.currentUser; // Asegúrate de haber importado FIREBASE_AUTH desde tu configuración de Firebase 
-  
-  registerNNPushToken(19929, '94w6SYN3UOdN7perom6xxo');
+  const currentUser = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
     if (currentUser) {
-    loadHighPulseData();
-    
+      loadHighPulseData();
     } else {
       navigation.navigate('Home');
     }
-  }, [refreshing, highPulseData]);
+  }, [refreshing]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -37,25 +33,20 @@ const NotiScreen = () => {
     setRefreshing(false);
   };
 
-  const loadHighPulseData = async () => {
+  const loadHighPulseData = useCallback(async () => {
     try {
       const pulsesRef = ref(FIREBASE_DB, `users/${currentUser.uid}/pulse`);
       const pulsesSnapshot = await get(pulsesRef);
 
       if (pulsesSnapshot.exists()) {
         const pulsesData = pulsesSnapshot.val();
-        const highPulses = [];
-
-        Object.keys(pulsesData).forEach((key) => {
-          const pulseValue = pulsesData[key].valor;
-          if (pulseValue > 100) {
-            highPulses.push({
-              key,
-              valor: pulseValue,
-              timestamp: pulsesData[key].timestamp,
-            });
-          }
-        });
+        const highPulses = Object.keys(pulsesData)
+          .filter(key => pulsesData[key].valor > 100)
+          .map(key => ({
+            key,
+            valor: pulsesData[key].valor,
+            timestamp: pulsesData[key].timestamp,
+          }));
 
         // Ordenar las pulsaciones altas por timestamp de forma descendente
         highPulses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -69,7 +60,7 @@ const NotiScreen = () => {
     } finally {
       setRefreshing(false);
     }
-  };
+  }, [currentUser, setHighPulseData]);
 
   const renderHighPulseCards = () => {
     return highPulseData.map((pulse) => {
@@ -77,33 +68,32 @@ const NotiScreen = () => {
       const valorMaximo = 200;
       const porcentajeLlenado = (valorPulso / valorMaximo) * 100;
 
-    return (
-      <View key={pulse.key} style={styles.pulseCard}
-        className="bg-red-200 p-4"
-      >
-        <View className="flex-row justify-between items-center" style={styles.timestampText}>
-              <Text className="text-3xl text-left text-gray-900/70  font-semibold">{pulse.valor}</Text> 
-              <View className="w-full p-2">
-                <View className="mr-12 mb-3">
-                  <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
-                    {formatTimestamp(pulse.timestamp)}&nbsp;&nbsp;
-                    <Tooltip width={windowWidth * 0.73} height={windowHeight * 0.33} popover={
-                      <Text className="text-white text-justify p-2">
-                        {t("pulse.normalPulseText.intro.text")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.intro.boldText")}</Text>,&nbsp;
-                        {t("pulse.normalPulseText.childrenIntro")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.childrenBoldText")}</Text>.&nbsp;
-                        {t("pulse.normalPulseText.conclusion")}
-                      </Text>
-                    }>
-                      <WarningOutlineIcon size={5} />
-                    </Tooltip>
-                  </Text>
-                </View>
-                <View className="ml-4" style={{ width: windowWidth * 0.65, height: 5, backgroundColor: '#e0e0e0', borderRadius: 5 }}>
-                  <View className="text-right" style={{ width: `${porcentajeLlenado}%`, height: '100%', backgroundColor: '#ef4444', borderRadius: 5 }} />
-                </View>
+      return (
+        <View key={pulse.key} style={styles.pulseCard} className="bg-red-200 p-4">
+          <View className="flex-row justify-between items-center" style={styles.timestampText}>
+            <Text className="text-3xl text-left text-gray-900/70 font-semibold">{pulse.valor}</Text>
+            <View className="w-full p-2">
+              <View className="mr-12 mb-3">
+                <Text className="text-right text-gray-500" style={{ marginRight: "10px" }}>
+                  {formatTimestamp(pulse.timestamp)}&nbsp;&nbsp;
+                  <Tooltip width={windowWidth * 0.73} height={windowHeight * 0.33} popover={
+                    <Text className="text-white text-justify p-2">
+                      {/* Asegúrate de tener estas traducciones definidas en tu archivo de idiomas */}
+                      {t("pulse.normalPulseText.intro.text")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.intro.boldText")}</Text>,&nbsp;
+                      {t("pulse.normalPulseText.childrenIntro")} <Text style={{ fontWeight: 'bold' }}>{t("pulse.normalPulseText.childrenBoldText")}</Text>.&nbsp;
+                      {t("pulse.normalPulseText.conclusion")}
+                    </Text>
+                  }>
+                    <WarningOutlineIcon size={5} />
+                  </Tooltip>
+                </Text>
+              </View>
+              <View className="ml-4" style={{ width: windowWidth * 0.65, height: 5, backgroundColor: '#e0e0e0', borderRadius: 5 }}>
+                <View className="text-right" style={{ width: `${porcentajeLlenado}%`, height: '100%', backgroundColor: '#ef4444', borderRadius: 5 }} />
               </View>
             </View>
-      </View>
+          </View>
+        </View>
       );
     });
   };
@@ -145,6 +135,9 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     margin: 10,
   },
+  timestampText: {
+    paddingHorizontal: 10,
+  },
 });
 
 const formatTimestamp = (timestamp) => {
@@ -153,4 +146,3 @@ const formatTimestamp = (timestamp) => {
 };
 
 export default NotiScreen;
-
