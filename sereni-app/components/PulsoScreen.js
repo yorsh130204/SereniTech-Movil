@@ -1,13 +1,12 @@
 // PulsoScreen.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Text, RefreshControl, StyleSheet, Dimensions } from 'react-native';
-import { get, ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off } from 'firebase/database';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebase';
 import * as Animatable from 'react-native-animatable';
 import { VStack, ScrollView, View, FavouriteIcon, WarningOutlineIcon } from 'native-base';
 import Translate from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
 import { Tooltip } from 'react-native-elements';
 
 const windowWidth = Dimensions.get('window').width;
@@ -130,7 +129,7 @@ const PulsoScreen = () => {
         <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
           <View className="items-center justify-center">
             <Animatable.View
-              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6"
+              className="rounded-full border-[#a6e0cd] w-72 h-72 mb-2 mt-6 p-10"
               style={{ borderWidth: 16 }}
             >
               <View className="items-center justify-center flex-row h-full">
@@ -139,7 +138,7 @@ const PulsoScreen = () => {
                 </View>
                 <View className="justify-center items-center">
                   <PulseIcon duration={pulseDuration} />
-                  <Text className="text-center text-4xl font-light">BPM</Text>
+                  <Text className="text-center text-3xl mt-2 font-light">BPM</Text>
                 </View>
               </View>
             </Animatable.View>

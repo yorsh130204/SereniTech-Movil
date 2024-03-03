@@ -1,24 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Text,
-  Platform,
-  RefreshControl,
-  StyleSheet,
-  Linking,
-  Dimensions,
-} from 'react-native';
+import { RefreshControl, StyleSheet, Linking, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import {
-  ScrollView,
-  View,
-  Button,
-} from 'native-base';
-import { ref, get, onValue, off } from 'firebase/database';
+import { ScrollView, View, Button } from 'native-base';
+import { ref, onValue, off } from 'firebase/database';
 import { FIREBASE_DB, FIREBASE_AUTH } from '../firebase';
 import { VStack } from 'native-base';
 import Translate from './LanguageSwitcher';
 import i18next from 'i18next';
 import { t } from 'i18next';
+import * as Location from 'expo-location';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -27,64 +17,73 @@ const GPSScreen = () => {
   const [highLocalizationData, setHighLocalizationData] = useState([]);
   const currentUser = FIREBASE_AUTH.currentUser;
   const [isComponentActive, setIsComponentActive] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
-const loadHighLocalizationData = useCallback(async () => {
-  try {
-    if (currentUser && isComponentActive) {
-      const localizationRef = ref(FIREBASE_DB, `users/${currentUser.uid}/localization`);
-      const unsubscribe = onValue(localizationRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const localizationData = snapshot.val();
+  const permisoLocalizacion = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Se denegó el permiso para acceder a la ubicación');
+      return;
+    }
+  };
 
-          if (localizationData) {
-            // Obtener las claves locales y ordenarlas por timestamp
-            const localKeys = Object.keys(localizationData).sort((a, b) => {
-              const timestampA = new Date(localizationData[a].timestamp);
-              const timestampB = new Date(localizationData[b].timestamp);
-              return timestampB - timestampA;
-            });
+  const loadHighLocalizationData = useCallback(async () => {
+    try {
+      if (currentUser && isComponentActive) {
+        const localizationRef = ref(FIREBASE_DB, `users/${currentUser.uid}/localization`);
+        const unsubscribe = onValue(localizationRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const localizationData = snapshot.val();
 
-            // Obtener el último elemento ordenado
-            const latestLocalizationKey = localKeys[0];
-            const latestLocalization = localizationData[latestLocalizationKey];
+            if (localizationData) {
+              // Obtener las claves locales y ordenarlas por timestamp
+              const localKeys = Object.keys(localizationData).sort((a, b) => {
+                const timestampA = new Date(localizationData[a].timestamp);
+                const timestampB = new Date(localizationData[b].timestamp);
+                return timestampB - timestampA;
+              });
 
-            // Obtener la ubicación correspondiente al timestamp más reciente
-            const localizationValue = latestLocalization.link;
-            const [latitude, longitude] = extractLatLongFromLink(localizationValue);
+              // Obtener el último elemento ordenado
+              const latestLocalizationKey = localKeys[0];
+              const latestLocalization = localizationData[latestLocalizationKey];
 
-            // Actualizar el estado con la ubicación más reciente
-            setHighLocalizationData([
-              {
-                key: latestLocalizationKey,
-                link: localizationValue,
-                latitude,
-                longitude,
-                timestamp: latestLocalization.timestamp,
-              },
-            ]);
+              // Obtener la ubicación correspondiente al timestamp más reciente
+              const localizationValue = latestLocalization.link;
+              const [latitude, longitude] = extractLatLongFromLink(localizationValue);
+
+              // Actualizar el estado con la ubicación más reciente
+              setHighLocalizationData([
+                {
+                  key: latestLocalizationKey,
+                  link: localizationValue,
+                  latitude,
+                  longitude,
+                  timestamp: latestLocalization.timestamp,
+                },
+              ]);
+            } else {
+              setHighLocalizationData([]);
+            }
           } else {
             setHighLocalizationData([]);
           }
-        } else {
-          setHighLocalizationData([]);
-        }
-        setRefreshing(false);
-      });
+          setRefreshing(false);
+        });
 
-      // Limpiar el evento de escucha cuando el componente se desmonta o desactiva
-      return () => {
-        off(localizationRef, 'value', unsubscribe);
-      };
+        // Limpiar el evento de escucha cuando el componente se desmonta o desactiva
+        return () => {
+          off(localizationRef, 'value', unsubscribe);
+        };
+      }
+    } catch (error) {
+      console.error(
+        'Error al cargar los datos de localización alta',
+        error.message
+      );
+    } finally {
+      setRefreshing(false);
     }
-  } catch (error) {
-    console.error(
-      'Error al cargar los datos de localización alta',
-      error.message
-    );
-  } finally {
-    setRefreshing(false);
-  }
-}, [currentUser, isComponentActive]);
+  }, [currentUser, isComponentActive]);
 
   const extractLatLongFromLink = (link) => {
     const match = link.match(/place\/([-0-9.]+),([-0-9.]+)/);
@@ -131,6 +130,9 @@ const loadHighLocalizationData = useCallback(async () => {
 
   useEffect(() => {
     setIsComponentActive(true);
+
+    // Solicitar permiso de localización
+    permisoLocalizacion();
 
     // Limpiar el estado cuando el componente se desmonta o desactiva
     return () => {
@@ -183,6 +185,7 @@ const loadHighLocalizationData = useCallback(async () => {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
+            showsUserLocation={true}
           >
             {/* Marcadores de la ubicación del usuario */}
             {renderHighLocalizationMarkers()}

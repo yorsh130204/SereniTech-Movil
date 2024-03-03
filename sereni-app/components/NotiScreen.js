@@ -1,6 +1,6 @@
 // NotiScreen.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { Alert, Platform, RefreshControl, StyleSheet, Dimensions } from 'react-native';
+import { Platform, RefreshControl, StyleSheet, Dimensions, TouchableOpacity, Button } from 'react-native';
 import { View, Text, VStack, ScrollView, KeyboardAvoidingView, WarningOutlineIcon } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { ref, get } from 'firebase/database';
@@ -8,6 +8,7 @@ import { FIREBASE_DB, FIREBASE_AUTH } from '../firebase';
 import Translate from './LanguageSwitcher';
 import { Tooltip } from 'react-native-elements';
 import { useTranslation } from 'react-i18next';
+import * as Notifications from 'expo-notifications';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -19,8 +20,39 @@ const NotiScreen = () => {
   const [highPulseData, setHighPulseData] = useState([]);
   const currentUser = FIREBASE_AUTH.currentUser;
 
+  const solicitarPermisosNotificacion = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== 'granted') {
+        const { status: newStatus } = await Notifications.requestPermissionsAsync();
+        if (newStatus !== 'granted') {
+          console.log('Permiso de notificación denegado');
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error al solicitar permisos de notificación:', error);
+    }
+  };
+
+  const enviarNotificacion = () => {
+    try {
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: '¡Hola!',
+          body: '¡Tienes un nuevo mensaje!',
+        },
+        trigger: null,
+      });
+      console.log('Notificación programada correctamente');
+    } catch (error) {
+      console.error('Error al programar la notificación:', error);
+    }
+  };
+
   useEffect(() => {
     if (currentUser) {
+      solicitarPermisosNotificacion();
       loadHighPulseData();
     } else {
       navigation.navigate('Home');
@@ -109,9 +141,18 @@ const NotiScreen = () => {
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-          <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={4} alignItems="center">
-            {renderHighPulseCards()}
-          </VStack>
+        <VStack space={4} p={6} bg="#edf3f2" rounded="lg" shadow={8} alignItems="center">
+          <View className="flex-row justify-between w-full mb-1 mt-2">
+            <Text className="text-xl text-left text-gray-900/70 font-semibold">
+              {t("home.tabs.pulso")}
+            </Text>
+            <Text className="text-right text-gray-500 text-lg font-light">
+              {t("pulse.title")}
+            </Text>
+          </View>
+          {renderHighPulseCards()}
+          <Button title="Enviar Notificación" onPress={enviarNotificacion} />
+        </VStack>
         </ScrollView>
       </KeyboardAvoidingView>
       <View style={styles.translateContainer}>
