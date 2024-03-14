@@ -33,6 +33,3 @@ sereni-app/.env*.local
 
 # typescript
 sereni-app/*.tsbuildinfo
-
-# firebase
-sereni-app/firebase.js
