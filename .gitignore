@@ -1,12 +1,12 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
-node_modules/
+sereni-app/node_modules/
 
 # Expo
-.expo/
-dist/
-web-build/
+sereni-app/.expo/
+sereni-app/dist/
+sereni-app/web-build/
 
 # Native
 *.orig.*
@@ -29,10 +29,10 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+sereni-app/.env*.local
 
 # typescript
-*.tsbuildinfo
+sereni-app/*.tsbuildinfo
 
 # firebase
-firebase.js
+sereni-app/firebase.js
